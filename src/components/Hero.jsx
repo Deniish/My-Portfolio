@@ -1,7 +1,7 @@
 import { useLayoutEffect, useRef } from "react";
 import { gsap } from "gsap";
 import DenishSignature from "../Design/DenishSignature";
-import "../Styles/Hero.css";
+import "../Styles/Hero.css";  
 import RippleBackground from "../Design/RippleBackground";
 import Particles from "../Design/Particles";
 
@@ -51,6 +51,8 @@ export default function Hero() {
       {/* Foreground content */}
       <div className="relative z-10 flex flex-col items-center px-4">
         <DenishSignature />
+
+        
       </div>
     </section>
   );

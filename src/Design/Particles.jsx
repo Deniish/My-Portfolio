@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Renderer, Camera, Geometry, Program, Mesh } from "ogl";
 
 const defaultColors = ["#ffffff", "#ffffff", "#ffffff"];
@@ -90,6 +90,7 @@ const Particles = ({
 }) => {
   const containerRef = useRef(null);
   const mouseRef = useRef({ x: 0, y: 0 });
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -112,9 +113,8 @@ const Particles = ({
     window.addEventListener("resize", resize, false);
     resize();
 
-    // ✅ Global mouse movement tracking
     const handleMouseMove = (e) => {
-      const x = (e.clientX / window.innerWidth) * 2 - 1; // -1 → 1
+      const x = (e.clientX / window.innerWidth) * 2 - 1;
       const y = -((e.clientY / window.innerHeight) * 2 - 1);
       mouseRef.current = { x, y };
     };
@@ -172,6 +172,9 @@ const Particles = ({
 
     const particles = new Mesh(gl, { mode: gl.POINTS, geometry, program });
 
+    // ✅ Mark as loaded once setup is ready
+    setLoaded(true);
+
     let animationFrameId;
     let lastTime = performance.now();
     let elapsed = 0;
@@ -224,9 +227,20 @@ const Particles = ({
   ]);
 
   return (
-    <div ref={containerRef} className={`relative w-full h-full ${className}`} />
+    <div ref={containerRef} className={`relative w-full h-full ${className}`}>
+      {!loaded && (
+        <div className="absolute inset-0 z-10 flex items-center justify-center text-white bg-black">
+          <span className="animate-pulse">Loading...</span>
+        </div>
+      )}
+      {/* Canvas will fade in after loading */}
+      <div
+        className={`absolute inset-0 transition-opacity duration-700 ${
+          loaded ? "opacity-100" : "opacity-0"
+        }`}
+      />
+    </div>
   );
 };
-
 
 export default Particles;

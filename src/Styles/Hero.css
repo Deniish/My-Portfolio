@@ -28,3 +28,115 @@
   80% { transform: translate(-5%, -25%); }
   90% { transform: translate(-10%, 10%); }
 }
+
+.scroll-text {
+  z-index: -2;
+  font-family: 'DancingScript';
+  overflow: visible;
+}
+.textBox {
+  height: 3rem;
+  overflow: hidden;
+  display: inline-block;
+  z-index: -2;
+  font-family: 'Kohinoor';
+  font-weight: 100;
+  font-size: 1.5rem; 
+   margin-left: -65px;
+    opacity: 0;      /* hidden initially */
+  transform: translateY(20px); /* optional: slightly lower */
+  transition: opacity 0.3s, transform 0.3s; /* smooth transition if needed */
+}
+
+.textBox ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  animation: moveText 14s infinite; /* adjust duration */
+}
+
+.textBox ul li {
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  /* color: #60a5fa; */
+  /* font-weight: 600; */
+}
+
+/* Keyframes with pauses at each word */
+@keyframes moveText {
+  0%, 10%   { transform: translateY(0); }
+  15%, 25%  { transform: translateY(-3rem); }
+  30%, 40%  { transform: translateY(-6rem); }
+  45%, 55%  { transform: translateY(-9rem); }
+  60%, 70%  { transform: translateY(-12rem); }
+  75%, 85%  { transform: translateY(-15rem); }
+  90%, 100% { transform: translateY(-18rem); } /* back to duplicate first */
+}
+/* Default (extra small < 320px) */
+.tagline-container {
+  top: 4.5rem;   /* closer to top */
+  left: 1rem;    /* left-4 */
+}
+
+.tagline-content {
+  font-size: 1rem; /* text-xl */
+  line-height: 1.5rem;
+}
+
+/* Mobile S (≥ 320px) */
+@media (min-width: 320px) {
+  .tagline-container {
+    top: 5rem;
+    left: 2.55rem;  /* moved a bit more right */
+  }
+}
+
+/* Mobile M (≥ 375px) */
+@media (min-width: 375px) {
+  .tagline-container {
+    top: 5.5rem;
+    left: 2.75rem;   /* moved a bit more right */
+  }
+}
+
+/* Mobile L (≥ 425px) */
+@media (min-width: 425px) {
+  .tagline-container {
+    top: 6rem;
+    left: 2.25rem;  /* moved a bit more right */
+  }
+}
+
+/* Tablet (≥ 768px) */
+@media (min-width: 768px) {
+  .tagline-container {
+    top: 7.21rem; /* very slightly up */
+    left: 2.5rem;
+  }
+  .tagline-content {
+    font-size: 1.5rem; /* text-3xl */
+    line-height: 2.25rem;
+  }
+}
+
+/* Laptop (≥ 1024px) */
+@media (min-width: 1024px) {
+  .tagline-container {
+    top: 10.25rem;
+    left: 4rem;
+  }
+  .tagline-content {
+    font-size: 1.85rem; /* text-4xl */
+    line-height: 2.5rem;
+  }
+}
+
+/* Laptop L (≥ 1440px) */
+@media (min-width: 1440px) {
+  .tagline-container {
+    top: 12.25rem;  /* very slightly more down */
+    left: 4.5rem;
+  }
+}
+
