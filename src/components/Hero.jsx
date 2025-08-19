@@ -4,6 +4,7 @@ import DenishSignature from "../Design/DenishSignature";
 import "../Styles/Hero.css";  
 import RippleBackground from "../Design/RippleBackground";
 import Particles from "../Design/Particles";
+import CardNav from "./CardNav";
 
 export default function Hero() {
   const denishRef = useRef(null);
@@ -27,6 +28,29 @@ export default function Hero() {
       .to(denishPath, { fill: "white", duration: 1 }, "-=1");
   }, []);
 
+  const items = [
+  {
+    label: "LinkedIn",
+    url: "https://linkedin.com/in/denish-sharma",
+    icon: "/src/assets/icons/linkedin-logo.svg", 
+    fontFamily: '"Poppins", sans-serif',
+  },
+  {
+    label: "GitHub",
+    url: "https://github.com/Deniish",
+    icon: "/src/assets/icons/github-logo.svg",
+    fontFamily: '"Monsa-Medium", sans-serif',
+  },
+  {
+    label: "Medium",
+    url: "https://medium.com/@denishsharma701",
+    icon: "/src/assets/icons/medium-logo.svg",
+    fontFamily: '"Playfair Display", serif',
+  }
+];
+
+
+
   return (
     <section className="relative flex flex-col items-center justify-center min-h-screen overflow-hidden text-white">
       
@@ -48,6 +72,17 @@ export default function Hero() {
 
       <div className="absolute inset-0 pointer-events-none grain-overlay z-5"></div>
 
+       <CardNav  
+          // logo={logo}
+          logoAlt="Company Logo"
+          items={items}
+          // baseColor="#fff"
+          menuColor="#000"
+          // buttonBgColor="#111"
+          // buttonTextColor="#fff"
+          ease="power3.out"
+        />
+        
       {/* Foreground content */}
       <div className="relative z-10 flex flex-col items-center px-4">
         <DenishSignature />

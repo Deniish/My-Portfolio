@@ -27,3 +27,18 @@
   font-family: 'Gambarino'; /* Give your font a name */
   src: url('/public/fonts/Gambarino_Complete/Fonts/OTF/Gambarino-Regular.otf') format('opentype');
 }
+
+/*----------------MonsaSans----------------*/
+@font-face {
+  font-family: 'Monsa-Bold'; /* Give your font a name */
+  src: url('/public/fonts/MonsaSans/Fonts/MonaSans-Bold.otf') format('opentype');
+}
+@font-face {
+  font-family: 'Monsa-Semi'; /* Give your font a name */
+  src: url('/public/fonts/MonsaSans/Fonts/MonaSans-SemiBold.otf') format('opentype');
+}
+@font-face {
+  font-family: 'Monsa-Medium'; /* Give your font a name */
+  src: url('/public/fonts/MonsaSans/Fonts/MonaSans-Medium.otf') format('opentype');
+}
+

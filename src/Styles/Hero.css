@@ -39,9 +39,10 @@
   overflow: hidden;
   display: inline-block;
   z-index: -2;
-  font-family: 'Kohinoor';
-  font-weight: 100;
-  font-size: 1.5rem; 
+  font-family: 'Boska-light';
+  font-weight: 400;
+  font-size: 1.5rem;
+  color: #ffffff; 
    margin-left: -65px;
     opacity: 0;      /* hidden initially */
   transform: translateY(20px); /* optional: slightly lower */

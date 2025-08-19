@@ -1,0 +1,347 @@
+.card-nav-container {
+  position: absolute;
+  top: 2em;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 800px;
+  z-index: 99;
+  box-sizing: border-box;
+}
+
+.card-nav {
+  display: block;
+  height: 60px;
+  padding: 0;
+  background-color: white;
+  border: 0.5px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+  will-change: height;
+}
+
+.card-nav-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.45rem 0.55rem 1.1rem;
+  z-index: 2;
+}
+
+.hamburger-menu {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  gap: 6px;
+}
+
+.hamburger-menu:hover .hamburger-line {
+  opacity: 0.75;
+}
+
+.hamburger-line {
+  width: 30px;
+  height: 2px;
+  background-color: currentColor;
+  transition: transform 0.25s ease, opacity 0.2s ease, margin 0.3s ease;
+  transform-origin: 50% 50%;
+}
+
+.hamburger-menu.open .hamburger-line:first-child {
+  transform: translateY(4px) rotate(45deg);
+}
+
+.hamburger-menu.open .hamburger-line:last-child {
+  transform: translateY(-4px) rotate(-45deg);
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.logo {
+  height: 28px;
+}
+
+.card-nav-cta-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1rem;
+  height: 100%;
+  border: none;
+  border-radius: calc(0.75rem - 0.35rem);
+  background-color: #111;
+  color: white;
+  font-family: 'Cabinet-thin', sans-serif;
+  font-size: 16px;
+  font-weight: 550;
+  text-decoration: none;
+  cursor: pointer;
+  overflow: hidden; /* hides sliding text */
+   min-width: 120px;
+}
+
+/* default text */
+.card-nav-cta-button span {
+  position: absolute;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+/* first "Resume" visible */
+.card-nav-cta-button span:first-child {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* second "Resume" hidden below */
+.card-nav-cta-button span:last-child {
+  transform: translateY(100%);
+  opacity: 0;
+}
+
+/* on hover → swap them */
+.card-nav-cta-button:hover span:first-child {
+  transform: translateY(-100%);
+  opacity: 0;
+}
+
+.card-nav-cta-button:hover span:last-child {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+
+
+.card-nav-content {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 60px;
+  bottom: 0;
+  padding: 0.5rem;
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  visibility: hidden;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.card-nav.open .card-nav-content {
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.nav-card {
+  height: 80px;
+  flex: 1 1 0;
+  min-width: 0;
+  border-radius: .25rem;
+  border: .0625rem solid #000;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 12px 16px;
+  gap: 10px;
+  user-select: none;
+  color: #000;
+  overflow: hidden; /* Important so overlay doesn’t spill out */
+  transition: color 0.3s ease;
+}
+
+/* Shared overlay setup */
+.nav-card::before {
+  content: "";
+  position: absolute;
+  top: -100%;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  transition: top 0.25s ease; /* slide effect */
+}
+
+/* Put label above overlay */
+.nav-card span {
+  position: relative;
+  z-index: 1;
+}
+
+/* LinkedIn */
+.nav-card.linkedin::before {
+  background-color: #0A66C2;
+}
+.nav-card.linkedin:hover::before {
+  top: 0;
+}
+.nav-card.linkedin:hover {
+  color: #fff;
+}
+
+/* GitHub */
+.nav-card.github::before {
+  background-color: rgba(24, 23, 23, 0.9);
+}
+.nav-card.github:hover::before {
+  top: 0;
+}
+.nav-card.github:hover {
+  color: #fff;
+}
+
+/* Medium */
+.nav-card.medium::before {
+  background-color: #00ab6c;
+}
+.nav-card.medium:hover::before {
+  top: 0;
+}
+.nav-card.medium:hover {
+  color: #fff;
+}
+
+
+
+.nav-card-label-with-icon {
+  display: flex;               /* full flex container */
+  align-items: center;         /* vertical center */
+  line-height: 83%;
+  /* font-family: 'Boska'; */
+  font-size: 20px;          /* consistent font size */
+  flex: 1;                     /* take full width */
+  position: relative;
+  gap: 8px;                  /* space between text and icon */
+  transition: transform 0.3s ease;
+}
+.nav-card-svg {
+  width: 20px;
+  height: 20px;
+  transition: filter 0.3s ease;
+}
+.nav-card:hover .nav-card-svg {
+  filter: brightness(0) invert(1);
+}
+.nav-card-icon {
+  position: absolute;          /* place arrow separately */
+  right: 12px;                 /* push arrow more to the right */
+  font-size: 1rem;
+  transition: transform 0.3s ease;
+}
+
+/* Hover effects */
+.nav-card:hover .nav-card-label-with-icon {
+  transform: translateX(15px); /* text moves slightly right */
+}
+
+.nav-card:hover .nav-card-icon {
+  transform: translateX(-25px); /* arrow moves slightly left */
+}
+
+
+/* Mobile */
+@media (max-width: 768px) {
+  .card-nav-container {
+    width: 90%;
+    top: 1.2em;
+  }
+
+  .card-nav-top {
+    padding: 0.5rem 1rem;
+    justify-content: space-between;
+  }
+
+  .hamburger-menu {
+    order: 2;
+  }
+
+  .logo-container {
+    position: static;
+    transform: none;
+    order: 1;
+  }
+
+  .card-nav-cta-button {
+    display: none;
+  }
+
+  .card-nav-content {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    padding: 0.5rem;
+    bottom: 0;
+    justify-content: flex-start;
+  }
+
+  .nav-card {
+    height: auto;
+    min-height: 60px;
+    flex: 1 1 auto;
+    max-height: none;
+  }
+
+  .nav-card-link {
+  font-size: 16px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: opacity 0.3s ease;
+  display: flex;                 /* flex instead of inline-flex */
+  align-items: center;
+  justify-content: space-between; /* push arrow to the right */
+  width: 100%;                    /* stretch across card */
+  padding: 0 8px;                 /* some horizontal spacing */
+}
+
+.nav-card-link-icon {
+  margin-left: 12px; /* extra spacing between label and arrow */
+}
+
+}
+
+/* Navbar Grain Effect */
+.navbar-grain-effect::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 400vw;
+  height: 400vh;
+  background-image: url('../assets/backgrounds/noise2.jpg'); /* Adjust path if needed */
+  top: calc(50% - 400vh / 2);
+  left: calc(50% - 400vw / 2);
+  opacity: 0.35; /* Subtle effect for navbar */
+  pointer-events: none;
+  animation: grain 8s steps(10) infinite;
+  z-index: 0; /* Make sure it's behind navbar content */
+}
+
+/* Reuse existing noise animation */
+@keyframes grain {
+  0%, 100% { transform: translate(0px, 0px); }
+  10% { transform: translate(-5%, -10%); }
+  20% { transform: translate(-15%, 5%); }
+  30% { transform: translate(7%, -25%); }
+  40% { transform: translate(-5%, 25%); }
+  50% { transform: translate(-15%, 10%); }
+  60% { transform: translate(15%, 0%); }
+  70% { transform: translate(0%, 15%); }
+  80% { transform: translate(-5%, -25%); }
+  90% { transform: translate(-10%, 10%); }
+}
