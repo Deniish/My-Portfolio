@@ -32,19 +32,19 @@ export default function Hero() {
   {
     label: "LinkedIn",
     url: "https://linkedin.com/in/denish-sharma",
-    icon: "/src/assets/icons/linkedin-logo.svg", 
+    icon: "/icons/linkedin-logo.svg", 
     fontFamily: '"Poppins", sans-serif',
   },
   {
     label: "GitHub",
     url: "https://github.com/Deniish",
-    icon: "/src/assets/icons/github-logo.svg",
+    icon: "/icons/github-logo.svg",
     fontFamily: '"Monsa-Medium", sans-serif',
   },
   {
     label: "Medium",
     url: "https://medium.com/@denishsharma701",
-    icon: "/src/assets/icons/medium-logo.svg",
+    icon: "/icons/medium-logo.svg",
     fontFamily: '"Playfair Display", serif',
   }
 ];
