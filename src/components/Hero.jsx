@@ -1,94 +1,142 @@
-import { useLayoutEffect, useRef } from "react";
-import { gsap } from "gsap";
+import React, { useRef, useState, lazy, Suspense, useEffect } from "react";
 import DenishSignature from "../Design/DenishSignature";
-import "../Styles/Hero.css";  
-import RippleBackground from "../Design/RippleBackground";
-import Particles from "../Design/Particles";
 import CardNav from "./CardNav";
+import "../Styles/Hero.css";
+import LightLoader from "../Design/Loader";
+
+// Lazy-load heavy visual components
+const Particles = lazy(() => import("../Design/Particles"));
+const RippleBackground = lazy(() => import("../Design/RippleBackground"));
+
+const LOADER_MIN_TIME = 1500; // ms, ensures loader is shown at least once
+
+// 👇 Single Loader component
+function LoaderBackground({ isVisible }) {
+  return (
+    <div
+      className={`absolute inset-0 z-20 flex items-center justify-center transition-opacity duration-700 ${
+        isVisible ? "opacity-100" : "opacity-0 pointer-events-none"
+      }`}
+      role="status"
+      aria-live="polite"
+      aria-label="Loading, please wait"
+    >
+      {/* Smooth radial background */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.15)_0%,rgba(255,255,255,0.03)_40%,transparent_80%)]" />
+
+      {/* Center Loader */}
+      <div className="relative z-10">
+        <LightLoader />
+        {/* Hidden text for screen readers */}
+        <span className="sr-only">Loading content...</span>
+      </div>
+    </div>
+  );
+}
 
 export default function Hero() {
-  const denishRef = useRef(null);
+  const cardNavRef = useRef(null);
+  const [bgVisible, setBgVisible] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  useLayoutEffect(() => {
-    const denishPath = denishRef.current;
-    if (!denishPath) return;
+  // ✅ Preload heavy assets more gracefully
+  useEffect(() => {
+    const start = Date.now();
 
-    const length = denishPath.getTotalLength();
+    const preload = () =>
+      Promise.all([
+        import("../Design/Particles"),
+        import("../Design/RippleBackground"),
+      ]);
 
-    gsap.set(denishPath, {
-      strokeDasharray: length,
-      strokeDashoffset: length,
-      stroke: "white",
-      fill: "transparent",
-      filter: "drop-shadow(0 0 0px white)"
-    });
+    if ("requestIdleCallback" in window) {
+      requestIdleCallback(() => {
+        preload().then(() => {
+          const elapsed = Date.now() - start;
+          const remaining = Math.max(0, LOADER_MIN_TIME - elapsed);
 
-    gsap.timeline({ defaults: { ease: "power2.out" } })
-      .to(denishPath, { strokeDashoffset: 0, duration: 3, ease: "power1.inOut" })
-      .to(denishPath, { fill: "white", duration: 1 }, "-=1");
+          setTimeout(() => {
+            setLoading(false); // hide loader
+            setBgVisible(true); // show main backgrounds
+          }, remaining);
+        });
+      });
+    } else {
+      preload().then(() => {
+        const elapsed = Date.now() - start;
+        const remaining = Math.max(0, LOADER_MIN_TIME - elapsed);
+
+        setTimeout(() => {
+          setLoading(false);
+          setBgVisible(true);
+        }, remaining);
+      });
+    }
   }, []);
-
-  const items = [
-  {
-    label: "LinkedIn",
-    url: "https://linkedin.com/in/denish-sharma",
-    icon: "/icons/linkedin-logo.svg", 
-    fontFamily: '"Poppins", sans-serif',
-  },
-  {
-    label: "GitHub",
-    url: "https://github.com/Deniish",
-    icon: "/icons/github-logo.svg",
-    fontFamily: '"Monsa-Medium", sans-serif',
-  },
-  {
-    label: "Medium",
-    url: "https://medium.com/@denishsharma701",
-    icon: "/icons/medium-logo.svg",
-    fontFamily: '"Playfair Display", serif',
-  }
-];
-
-
 
   return (
     <section className="relative flex flex-col items-center justify-center min-h-screen overflow-hidden text-white">
-      
-      {/* Particles as background */}
-      <div className="absolute inset-0 z-0 width: '100%'">
-        <Particles
-          particleColors={["#ffffff", "#ffffff"]}
-          particleCount={1000}
-          particleSpread={20}
-          speed={0.3}
-          particleBaseSize={100}
-          moveParticlesOnHover={true}
-          alphaParticles={true}
-          disableRotation={false}
-        />
-      </div>
+      {/* Loader (only one, no double render) */}
+      <LoaderBackground isVisible={loading} />
 
-      <RippleBackground />
+      {/* Backgrounds (only visible when ready) */}
+      <Suspense fallback={null}>
+        {bgVisible && (
+          <>
+            <div className="absolute inset-0 z-0 transition-opacity duration-1000 opacity-100">
+              <Particles
+                particleColors={["#ffffff", "#ffffff"]}
+                particleCount={1000}
+                particleSpread={20}
+                speed={0.3}
+                particleBaseSize={100}
+                moveParticlesOnHover={true}
+                alphaParticles={true}
+                disableRotation={false}
+              />
+            </div>
+            <RippleBackground />
+            <div className="absolute inset-0 pointer-events-none grain-overlay z-5" />
+          </>
+        )}
+      </Suspense>
 
-      <div className="absolute inset-0 pointer-events-none grain-overlay z-5"></div>
+      {/* CardNav */}
+      <CardNav
+        ref={cardNavRef}
+        items={[
+          {
+            label: "LinkedIn",
+            url: "https://linkedin.com/in/denish-sharma",
+            icon: "/icons/linkedin-logo.svg",
+            fontFamily: '"Poppins", sans-serif',
+          },
+          {
+            label: "GitHub",
+            url: "https://github.com/Deniish",
+            icon: "/icons/github-logo.svg",
+            fontFamily: '"Monsa-Medium", sans-serif',
+          },
+          {
+            label: "Medium",
+            url: "https://medium.com/@denishsharma701",
+            icon: "/icons/medium-logo.svg",
+            fontFamily: '"Playfair Display", serif',
+          },
+        ]}
+        menuColor="#000"
+        ease="power3.out"
+      />
 
-       <CardNav  
-          // logo={logo}
-          logoAlt="Company Logo"
-          items={items}
-          // baseColor="#fff"
-          menuColor="#000"
-          // buttonBgColor="#111"
-          // buttonTextColor="#fff"
-          ease="power3.out"
-        />
-        
-      {/* Foreground content */}
-      <div className="relative z-10 flex flex-col items-center px-4">
-        <DenishSignature />
-
-        
-      </div>
+      {/* Signature only after background is ready */}
+      {bgVisible && (
+        <div
+          className="relative z-10 flex flex-col items-center px-4 
+          opacity-0 animate-fade-in-smooth"
+        >
+          <DenishSignature cardNavRef={cardNavRef} />
+        </div>
+      )}
     </section>
   );
 }

@@ -29,6 +29,34 @@
   90% { transform: translate(-10%, 10%); }
 }
 
+
+/* Performance hints for GSAP-animated elements */
+.card-nav,
+.textBox,
+.signature-letter,   /* if you assign this class in signature */
+.logo-container canvas {
+  will-change: transform, opacity;
+}
+
+.card-nav {
+  transform: translateZ(0); /* optional GPU promotion */
+}
+@keyframes fadeInSmooth {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-smooth {
+  animation: fadeInSmooth 1.8s ease-in-out 0.3s forwards;
+}
+
+
 .scroll-text {
   z-index: -2;
   font-family: 'DancingScript';

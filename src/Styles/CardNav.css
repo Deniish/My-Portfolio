@@ -66,16 +66,50 @@
 }
 
 .logo-container {
+  width: 90px;   /* was 120px */
+  height: 65px;  /* was 80px */
   display: flex;
   align-items: center;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
+  justify-content: center;
+  margin-top: -10px;
+  z-index: 100;
 }
 
+.logo-container canvas {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain;
+  z-index: 100;
+}
+
+
+
+
 .logo {
+  width: 100%;       /* make it fill container */
+  height: 100%;
+}
+
+.menu-logo-text {
+  position: absolute;       /* absolute relative to card-nav-top */
+  left: 60px;               /* adjust distance from hamburger menu */
+  top: 50%;                 /* vertical center */
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.menu-logo {
+  width: 28px;
   height: 28px;
+}
+
+.menu-text {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  color: #000;
 }
 
 .card-nav-cta-button {
@@ -98,25 +132,21 @@
    min-width: 120px;
 }
 
-/* default text */
 .card-nav-cta-button span {
   position: absolute;
-  transition: transform 0.3s ease, opacity 0.3s ease;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* first "Resume" visible */
 .card-nav-cta-button span:first-child {
   transform: translateY(0);
   opacity: 1;
 }
 
-/* second "Resume" hidden below */
 .card-nav-cta-button span:last-child {
   transform: translateY(100%);
   opacity: 0;
 }
 
-/* on hover → swap them */
 .card-nav-cta-button:hover span:first-child {
   transform: translateY(-100%);
   opacity: 0;
@@ -126,6 +156,7 @@
   transform: translateY(0);
   opacity: 1;
 }
+
 
 
 
@@ -265,10 +296,13 @@
   .card-nav-top {
     padding: 0.5rem 1rem;
     justify-content: space-between;
+    /* display: flex;
+    align-items: center; */
   }
 
   .hamburger-menu {
     order: 2;
+    /* margin-left: auto; */
   }
 
   .logo-container {
@@ -276,10 +310,11 @@
     transform: none;
     order: 1;
   }
-
-  
-
-  .card-nav-content {
+  .menu-logo-text {
+   display: none;
+    order: 3;
+  }
+.card-nav-content {
     flex-direction: column;
     align-items: stretch;
     gap: 8px;
