@@ -114,24 +114,25 @@ const DenishSignature = ({ cardNavRef, onComplete, onIntroStart }) => { // ★ a
       const tl = gsap.timeline();
 
       // NAME LETTERS
-      namePaths.forEach((path, i) => {
-        tl.to(
-          path,
-          {
-            strokeDashoffset: 0,
-            duration: 0.6,
-            opacity: 1,
-            visibility: "visible",
-            ease: "power1.inOut",
-          },
-          i * 0.3
-        );
-        tl.to(
-          path,
-          { fill: "white", duration: 0.6, ease: "power1.inOut" },
-          i * 0.3 + 0.4
-        );
-      });
+        namePaths.forEach((path, i) => {
+          tl.to(
+            path,
+            {
+              strokeDashoffset: 0,
+              duration: 0.9,        // increased from 0.6 → 0.9 for slower stroke
+              opacity: 1,
+              visibility: "visible",
+              ease: "power2.inOut", // smoother easing
+            },
+            i * 0.25                // slightly smaller stagger for smoother flow
+          );
+          tl.to(
+            path,
+            { fill: "white", duration: 0.8, ease: "power2.inOut" }, // slower fill fade
+            i * 0.25 + 0.5
+          );
+        });
+
 
       // UNDERLINE
       if (underlineRef.current) {
@@ -155,21 +156,22 @@ const DenishSignature = ({ cardNavRef, onComplete, onIntroStart }) => { // ★ a
         taglinePaths,
         {
           strokeDashoffset: 0,
-          duration: 1.2,
-          ease: "power1.inOut",
+          duration: 1.5,            // slower stroke
+          ease: "power2.inOut",
           opacity: 1,
           visibility: "visible",
-          stagger: 0.35,
+          stagger: 0.4,             // smoother stagger
         },
         "taglineStart+=0.2"
       );
+
       tl.to(
         taglinePaths,
         {
           fill: "white",
           duration: 1.0,
-          ease: "power1.inOut",
-          stagger: 0.35,
+          ease: "power2.inOut",      // smoother easing
+          stagger: 0.4,
         },
         "<"
       );

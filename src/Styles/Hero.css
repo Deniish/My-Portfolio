@@ -67,10 +67,10 @@
   overflow: hidden;
   display: inline-block;
   z-index: -2;
-  font-family: 'Boska-light';
-  font-weight: 400;
-  font-size: 1.5rem;
-  color: #ffffff; 
+  font-family: 'Manrope';
+  font-weight: 900;
+  font-size: 1.4rem;
+  color: #E5E7EB; 
    margin-left: -65px;
     opacity: 0;      /* hidden initially */
   transform: translateY(20px); /* optional: slightly lower */

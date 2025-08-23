@@ -42,3 +42,38 @@
   src: url('/public/fonts/MonsaSans/Fonts/MonaSans-Medium.otf') format('opentype');
 }
 
+
+/*----------------Cavet----------------*/
+@font-face {
+  font-family: 'Cavet'; /* Give your font a name */
+  src: url('/public/fonts/Cavet/Caveat-VariableFont_wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+/*----------------Indie_flower----------------*/
+@font-face {
+  font-family: 'Indieflower'; /* Give your font a name */
+  src: url('/public/fonts/Indie_flower/IndieFlower-Regular.ttf') format('truetype');
+}
+
+/*----------------LuckiestGuy----------------*/
+@font-face {
+  font-family: 'LuckiestGuy'; /* Give your font a name */
+  src: url('/public/fonts/LuckiestGuy/LuckiestGuy-Regular.ttf') format('truetype');
+}
+
+/*----------------Manrope----------------*/
+@font-face {
+  font-family: 'Manrope'; /* Give your font a name */
+  src: url('/public/fonts/Manrope/Manrope-VariableFont_wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+
+/*----------------Satisfy----------------*/
+@font-face {
+  font-family: 'Satisfy'; /* Give your font a name */
+  src: url('/public/fonts/Satisfy/Satisfy-Regular.ttf') format('truetype');
+}
