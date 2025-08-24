@@ -68,8 +68,8 @@
   display: inline-block;
   z-index: -2;
   font-family: 'Manrope';
-  font-weight: 900;
-  font-size: 1.4rem;
+  font-weight: 800;
+  font-size: 1.2rem;
   color: #E5E7EB; 
    margin-left: -65px;
     opacity: 0;      /* hidden initially */

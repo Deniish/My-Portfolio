@@ -48,10 +48,13 @@
 // );
 
 // }
+
+
+
 export default function LightLoader() {
   return (
     <div role="status" aria-label="Loading" className="inline-flex items-center gap-2">
-      <span className="sr-only">Loading</span>
+      <span className=" text-white">Loading</span>
       <div className="h-2 w-2 rounded-full bg-white animate-bounce [animation-delay:-0.2s]" />
       <div className="h-2 w-2 rounded-full bg-white animate-bounce [animation-delay:-0.1s]" />
       <div className="h-2 w-2 rounded-full bg-white animate-bounce" />
