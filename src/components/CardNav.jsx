@@ -13,6 +13,7 @@ import "../Styles/CardNav.css";
 import MetallicPaint, { parseLogoImage } from "../Design/MetallicPaint";
 // replace with your own SVG
 import logo from "../assets/D-logo1.svg"; 
+import ShinyText from '../Design/ShinyText';
 
 const CardNav = forwardRef(
   (
@@ -222,7 +223,7 @@ const CardNav = forwardRef(
               <img src="/icons/tree-logo.svg" alt="Logo" className="menu-logo" />
               <span className="menu-text">Link Tree</span>
             </div>
-
+              
             <a
               href="/resume.pdf"
               download="Denish_Sharma_Resume.pdf"

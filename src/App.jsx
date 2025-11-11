@@ -9,6 +9,7 @@ import { ReactLenis, useLenis } from "lenis/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/all";
 import LightLoader from "./Design/Loader";
+import Navbar from "./components/Navbar";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -65,7 +66,7 @@ export default function App() {
 
       {/* Toasts */}
       <Toaster position="top-right" />
-
+      <Navbar />
       {/* Main sections */}
       <Hero />
 

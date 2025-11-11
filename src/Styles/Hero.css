@@ -169,3 +169,17 @@
   }
 }
 
+
+/*----signture component-----*/
+/* Smooth responsive scaling for signature */
+.signature-wrapper {
+  width: clamp(180px, 38vw, 520px);
+}
+
+/* Disable 3D tilt on touch devices */
+@media (max-width: 768px) {
+  .signature-container {
+    perspective: none !important;
+  }
+}
+

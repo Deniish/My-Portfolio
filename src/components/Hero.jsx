@@ -27,48 +27,53 @@ export default function Hero() {
   return (
     <>
       {/* Hero Section */}
-      <section className="relative flex flex-col justify-end items-center min-h-screen overflow-hidden text-white">
+      <section className="relative flex flex-col items-center justify-center min-h-screen px-4 overflow-hidden text-white sm:px-6 md:px-10 lg:px-20">
+
         <BackgroundLayer visible={bgVisible} />
 
         {/* CardNav */}
-        <CardNav
-          ref={cardNavRef}
-          items={[
-            {
-              label: "LinkedIn",
-              url: "https://linkedin.com/in/denish-sharma",
-              icon: "/icons/linkedin-logo.svg",
-              fontFamily: '"Poppins", sans-serif',
-            },
-            {
-              label: "GitHub",
-              url: "https://github.com/Deniish",
-              icon: "/icons/github-logo.svg",
-              fontFamily: '"Monsa-Medium", sans-serif',
-            },
-            {
-              label: "Medium",
-              url: "https://medium.com/@denishsharma701",
-              icon: "/icons/medium-logo.svg",
-              fontFamily: '"Playfair Display", serif',
-            },
-          ]}
-          menuColor="#000"
-          ease="power3.out"
-        />
+        <div className="w-full max-w-[90vw] sm:max-w-xl md:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto mb-6 sm:mb-8 md:mb-10">
+          <CardNav
+            ref={cardNavRef}
+            items={[
+              {
+                label: "LinkedIn",
+                url: "https://linkedin.com/in/denish-sharma",
+                icon: "/icons/linkedin-logo.svg",
+                fontFamily: '"Poppins", sans-serif',
+              },
+              {
+                label: "GitHub",
+                url: "https://github.com/Deniish",
+                icon: "/icons/github-logo.svg",
+                fontFamily: '"Monsa-Medium", sans-serif',
+              },
+              {
+                label: "Medium",
+                url: "https://medium.com/@denishsharma701",
+                icon: "/icons/medium-logo.svg",
+                fontFamily: '"Playfair Display", serif',
+              },
+            ]}
+            menuColor="#000"
+            ease="power3.out"
+          />
+        </div>
 
         {/* Signature centered */}
         {bgVisible && (
-          <div className="relative z-10 flex flex-col justify-center items-center px-4">
+          <div className="relative z-10 flex flex-col items-center justify-center w-full max-w-xs translate-y-3 sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl sm:translate-y-4 md:translate-y-6">
             <DenishSignature cardNavRef={cardNavRef} />
           </div>
+
+
         )}
       </section>
 
-      {/* ServiceSummary Section */}
-      <section className="relative flex flex-col justify-center items-center min-h-screen overflow-hidden text-white">
-        <BackgroundLayer visible={bgVisible} />
-        <ServiceSummary />
+      {/* ServiceSummary Section */} 
+      <section className="relative flex flex-col items-center justify-center min-h-screen overflow-hidden text-white"> 
+        <BackgroundLayer visible={bgVisible} /> 
+        <ServiceSummary /> 
       </section>
     </>
   );

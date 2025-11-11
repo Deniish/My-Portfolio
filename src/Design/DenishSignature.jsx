@@ -95,7 +95,7 @@ const DenishSignature = ({ cardNavRef, onComplete, onIntroStart }) => { // ★ a
     }, wrapRef);
 
     // Fake loader (2s)
-    const timer = setTimeout(() => setIsReady(true), 2000);
+    const timer = setTimeout(() => setIsReady(true), 10);
 
     return () => {
       clearTimeout(timer);
@@ -148,49 +148,49 @@ const DenishSignature = ({ cardNavRef, onComplete, onIntroStart }) => { // ★ a
         );
       }
 
-      // animate tagline
-      tl.add("taglineStart", ">");                         // ★ add label before tagline
-      tl.call(() => onIntroStart?.(), null, "taglineStart"); // ★ trigger lazy background load
+       // animate tagline
+        tl.add("taglineStart", ">");
+        tl.call(() => onIntroStart?.(), null, "taglineStart");
 
-      tl.to(
-        taglinePaths,
-        {
-          strokeDashoffset: 0,
-          duration: 1.5,            // slower stroke
-          ease: "power2.inOut",
-          opacity: 1,
-          visibility: "visible",
-          stagger: 0.4,             // smoother stagger
-        },
-        "taglineStart+=0.2"
-      );
-
-      tl.to(
-        taglinePaths,
-        {
-          fill: "white",
-          duration: 1.0,
-          ease: "power2.inOut",      // smoother easing
-          stagger: 0.4,
-        },
-        "<"
-      );
-
-      // SHOW TEXTBOX
-      tl.add("taglineDone");
-      if (textBoxRef.current) {
-        tl.set(textBoxRef.current, { autoAlpha: 0, y: 20 });
         tl.to(
-          textBoxRef.current,
+          taglinePaths,
           {
-            autoAlpha: 1,
-            y: 0,
-            duration: 0.8,
-            ease: "power1.out",
+            strokeDashoffset: 0,
+            duration: 0.75,          // ↓ from 1.0
+            ease: "power2.out",
+            opacity: 1,
+            visibility: "visible",
+            stagger: 0.18,           // ↓ from 0.25
           },
-          "taglineDone"
+          "taglineStart+=0.1"        // ↓ again for snappier start
         );
-      }
+
+        tl.to(
+          taglinePaths,
+          {
+            fill: "white",
+            duration: 0.5,           // ↓ from 0.7
+            ease: "power2.out",
+            stagger: 0.18,
+          },
+          "<"
+        );
+
+        // SHOW TEXTBOX
+        tl.add("taglineDone");
+        if (textBoxRef.current) {
+          tl.set(textBoxRef.current, { autoAlpha: 0, y: 12 }); // ↓ smaller travel
+          tl.to(
+            textBoxRef.current,
+            {
+              autoAlpha: 1,
+              y: 0,
+              duration: 0.45,        // ↓ from 0.6
+              ease: "power1.out",
+            },
+            "taglineDone"
+          );
+        }
 
       // CARDNAV
       if (cardNavRef?.current) {
@@ -269,7 +269,7 @@ const DenishSignature = ({ cardNavRef, onComplete, onIntroStart }) => { // ★ a
         willChange: "transform",
       }}
     >
-      {isReady === false && (
+      {/* {isReady === false && (
         <div className="flex items-center space-x-1 text-sm font-medium text-gray-300">
         <span className="animate-pulse">Loading</span>
         <span className="flex space-x-1">
@@ -279,7 +279,7 @@ const DenishSignature = ({ cardNavRef, onComplete, onIntroStart }) => { // ★ a
         </span>
       </div>
 
-      )}
+      )} */}
 
 
       <svg
@@ -334,6 +334,11 @@ const DenishSignature = ({ cardNavRef, onComplete, onIntroStart }) => { // ★ a
             className="scroll-text w-[300px] h-auto -ml-2"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 450 57.75"
+            style={{
+          visibility: isReady ? "visible" : "hidden",
+          opacity: isReady ? 1 : 0,
+          transition: "opacity 0.3s ease",
+        }}
           >
             <path ref={(el) => (scrollTextPathsRef.current[0] = el)} d="M2.20 40.45Q1.15 40.45 0.58 40.27Q0 40.10 0 39.45Q0 39.20 0.05 38.92Q0.10 38.65 0.25 38.30Q0.50 37.75 1.10 37.48Q1.70 37.20 2.20 37.20Q2.70 37.20 3.10 37.45Q3.80 37.95 4.75 38.33Q5.70 38.70 6.75 38.70Q7.95 38.70 9.20 38.13Q10.45 37.55 11.55 36Q13.05 34.05 14.35 31.13Q15.65 28.20 16.73 24.95Q17.80 21.70 18.65 18.63Q19.50 15.55 20.05 13.30Q17.45 13.50 15 14.17Q12.55 14.85 10.97 16.07Q9.40 17.30 9.40 19.10Q9.40 20.10 9.95 20.72Q10.50 21.35 11.22 21.70Q11.95 22.05 12.40 22.30Q12.75 22.50 12.75 22.65Q12.75 22.95 12.30 22.75Q11.70 22.60 10.78 22.07Q9.85 21.55 9.13 20.65Q8.40 19.75 8.35 18.60Q8.35 18.50 8.28 18.30Q8.20 18.10 8.20 17.95Q8.10 16.05 9.18 14.75Q10.25 13.45 12.08 12.63Q13.90 11.80 16.13 11.42Q18.35 11.05 20.60 11.05L20.80 10.55Q20.90 10.30 21.38 10.13Q21.85 9.95 22.35 9.95Q22.85 9.95 23.18 10.10Q23.50 10.25 23.50 10.50Q23.50 10.75 23.25 11.15Q24.90 11.30 26.28 11.65Q27.65 12 28.60 12.50Q28.95 12.65 29.43 13.13Q29.90 13.60 29.90 13.90Q29.90 14.15 29.50 14.15Q29.30 14.15 29.00 14.10Q28.70 14.05 28.30 13.90Q27.35 13.55 25.83 13.40Q24.30 13.25 22.55 13.25Q21.80 15.55 20.78 18.70Q19.75 21.85 18.48 25.23Q17.20 28.60 15.70 31.67Q14.20 34.75 12.55 36.85Q12.05 37.35 11.58 37.85Q11.10 38.35 10.65 38.75Q13.40 38.80 15.67 38.70Q17.95 38.60 19.50 38.55L19.80 38.55Q20.35 38.55 20.35 38.80Q20.35 39.05 20.05 39.35Q19.75 39.65 19.55 39.75Q19.30 39.85 17.83 39.98Q16.35 40.10 14.18 40.17Q12 40.25 9.65 40.33Q7.30 40.40 5.30 40.42Q3.30 40.45 2.20 40.45Z" />
             <path ref={(el) => (scrollTextPathsRef.current[1] = el)} d="M0.40 24.85Q0.25 24.85 0.13 24.65Q0 24.45 0.05 24.10Q0.15 23.55 0.18 22.70Q0.20 21.85 0.20 21.05L0.20 19.30Q0.25 18.85 0.20 18.42Q0.15 18 0.15 17.65Q0.15 17.10 0.45 16.75Q0.75 16.40 1.75 16.40Q2.35 16.40 2.55 16.70Q2.75 17 2.75 17.45Q2.75 17.95 2.58 18.57Q2.40 19.20 2.30 19.60Q2.05 20.55 1.65 21.68Q1.25 22.80 0.90 24.30Q0.75 24.85 0.40 24.85Z" />
