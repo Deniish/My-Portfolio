@@ -127,12 +127,33 @@
   }
 }
 
-@media (max-width: 320px) {
+@media (max-width: 360px) {
   .textBox {
-    font-size: 0.6rem;     /* smaller, cleaner */
-    --step: 2.1em; 
+    height: 3rem;                 
+    font-size: 0.5rem;            /* smaller text for tiny screens */
+    /* margin-left: clamp(-40px, -8vw, -70px); */
+  }
+
+  .textBox ul {
+    animation: moveText 14s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+  }
+
+  .textBox ul li {
+    height: 3rem;                 /* override step value */
+  }
+
+  /* original keyframes restored for this breakpoint */
+  @keyframes moveText {
+    0%, 10%   { transform: translateY(0); }
+    15%, 25%  { transform: translateY(-3rem); }
+    30%, 40%  { transform: translateY(-6rem); }
+    45%, 55%  { transform: translateY(-9rem); }
+    60%, 70%  { transform: translateY(-12rem); }
+    75%, 85%  { transform: translateY(-15rem); }
+    90%, 100% { transform: translateY(-18rem); }
   }
 }
+
 
 /* Default (extra small < 320px) */
 .tagline-container {
