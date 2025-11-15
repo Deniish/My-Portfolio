@@ -16,9 +16,9 @@ export default function RippleBackground() {
     };
 
     window.addEventListener("mousemove", handleMouseMove);
-
+    /*#0D0D0D or #121212*/
     function draw() {
-      ctx.fillStyle = "rgba(0, 0, 0, 0.2)"; // dark fading background
+      ctx.fillStyle = "rgb(17, 17, 17)"; // dark fading background
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       ripples.forEach((ripple, i) => {

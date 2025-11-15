@@ -58,50 +58,82 @@
 
 
 .scroll-text {
-  z-index: -2;
+  z-index: 0;
   font-family: 'DancingScript';
   overflow: visible;
 }
+/* Responsive textBox */
 .textBox {
-  height: 3rem;
+  /* Step scales automatically with font size */
+  --step: 1.2em;
+
+  height: var(--step);
   overflow: hidden;
   display: inline-block;
-  z-index: -2;
+  z-index: 0;
+
   font-family: 'Manrope';
   font-weight: 800;
-  font-size: 1.2rem;
-  color: #E5E7EB; 
-   margin-left: -65px;
-    opacity: 0;      /* hidden initially */
-  transform: translateY(20px); /* optional: slightly lower */
-  transition: opacity 0.3s, transform 0.3s; /* smooth transition if needed */
+  font-size: clamp(0.9rem, 2.5vw, 1.2rem); /* responsive font */
+  color: #E5E7EB;
+
+  margin-left: clamp(-70px, -10vw, -110px); /* responsive shift */
+
+  opacity: 0;
+  transform: translateY(20px);
+
+  transition: opacity 0.35s cubic-bezier(0.65, 0, 0.35, 1),
+              transform 0.35s cubic-bezier(0.65, 0, 0.35, 1);
 }
 
 .textBox ul {
   margin: 0;
   padding: 0;
   list-style: none;
-  animation: moveText 14s infinite; /* adjust duration */
+  animation: moveText 14s cubic-bezier(0.65, 0, 0.35, 1) infinite;
 }
 
 .textBox ul li {
-  height: 3rem;
+  height: var(--step);
   display: flex;
   align-items: center;
-  /* color: #60a5fa; */
-  /* font-weight: 600; */
 }
 
-/* Keyframes with pauses at each word */
+/* Keep step-based keyframes */
 @keyframes moveText {
   0%, 10%   { transform: translateY(0); }
-  15%, 25%  { transform: translateY(-3rem); }
-  30%, 40%  { transform: translateY(-6rem); }
-  45%, 55%  { transform: translateY(-9rem); }
-  60%, 70%  { transform: translateY(-12rem); }
-  75%, 85%  { transform: translateY(-15rem); }
-  90%, 100% { transform: translateY(-18rem); } /* back to duplicate first */
+  15%, 25%  { transform: translateY(calc(-1 * var(--step))); }
+  30%, 40%  { transform: translateY(calc(-2 * var(--step))); }
+  45%, 55%  { transform: translateY(calc(-3 * var(--step))); }
+  60%, 70%  { transform: translateY(calc(-4 * var(--step))); }
+  75%, 85%  { transform: translateY(calc(-5 * var(--step))); }
+  90%, 100% { transform: translateY(calc(-6 * var(--step))); }
 }
+
+/* ------- MOBILE FIXES -------- */
+@media (max-width: 600px) {
+  .textBox {
+    font-size: clamp(0.75rem, 4vw, 1rem); /* smaller text */
+    
+    --step: 1.1em; /* reduce height spacing */
+  }
+}
+
+@media (max-width: 400px) {
+  .textBox {
+    font-size: 0.7rem;
+    /* --step: 1em; */
+    
+  }
+}
+
+@media (max-width: 320px) {
+  .textBox {
+    font-size: 0.6rem;     /* smaller, cleaner */
+    --step: 2.1em; 
+  }
+}
+
 /* Default (extra small < 320px) */
 .tagline-container {
   top: 4.5rem;   /* closer to top */
@@ -111,6 +143,13 @@
 .tagline-content {
   font-size: 1rem; /* text-xl */
   line-height: 1.5rem;
+}
+.signature-wrapper,
+.service-summary-section {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
 }
 
 /* Mobile S (≥ 320px) */
@@ -173,8 +212,9 @@
 /*----signture component-----*/
 /* Smooth responsive scaling for signature */
 .signature-wrapper {
-  width: clamp(180px, 38vw, 520px);
+  width: clamp(200px, 45vw, 480px);
 }
+
 
 /* Disable 3D tilt on touch devices */
 @media (max-width: 768px) {

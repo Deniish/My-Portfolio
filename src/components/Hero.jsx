@@ -62,7 +62,7 @@ export default function Hero() {
 
         {/* Signature centered */}
         {bgVisible && (
-          <div className="relative z-10 flex flex-col items-center justify-center w-full max-w-xs translate-y-3 sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl sm:translate-y-4 md:translate-y-6">
+          <div className="relative z-10 flex flex-col items-center justify-center w-full max-w-xs p-0 m-0 signature-wrapper sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl">
             <DenishSignature cardNavRef={cardNavRef} />
           </div>
 
@@ -71,7 +71,8 @@ export default function Hero() {
       </section>
 
       {/* ServiceSummary Section */} 
-      <section className="relative flex flex-col items-center justify-center min-h-screen overflow-hidden text-white"> 
+      <section className="relative flex flex-col items-center justify-center p-0 px-4 py-24 m-0 overflow-hidden text-white service-summary-section md:py-32">
+ 
         <BackgroundLayer visible={bgVisible} /> 
         <ServiceSummary /> 
       </section>

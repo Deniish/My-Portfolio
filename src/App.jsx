@@ -54,13 +54,15 @@ export default function App() {
     <ReactLenis
       root
       options={{
-        duration: 1.2,
-        easing: (t) => 1 - Math.pow(2, -10 * t),
+        duration: 1.6,
+        lerp: 0.08,
         smoothWheel: true,
         smoothTouch: false,
+        easing: (t) => 1 - Math.pow(1 - t, 4), 
       }}
       className="relative w-screen min-h-screen overflow-x-auto"
     >
+
       {/* Global Loader */}
       <Loader isVisible={loading} />
 
