@@ -10,6 +10,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/all";
 import LightLoader from "./Design/Loader";
 import Navbar from "./components/Navbar";
+import Services from "./components/Services";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -71,7 +72,7 @@ export default function App() {
       <Navbar />
       {/* Main sections */}
       <Hero />
-
+      <Services />
       {/* Dummy sections for testing scroll */}
       <section className="min-h-screen bg-red-500/10"></section>
       <section className="min-h-screen bg-green-500/10"></section>

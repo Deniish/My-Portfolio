@@ -42,7 +42,7 @@ const ServiceSummary = () => {
   }, []);
 
   return (
-    <section className="w-full px-4 mt-20 mb-42 overflow-hidden font-light leading-snug text-center contact-text-responsive">
+    <section className="w-full px-4 mt-20 overflow-hidden font-light leading-snug text-center mb-42 contact-text-responsive">
       {/* Service 1 */}
       <div id="title-service-1" ref={containerRefs.service1}>
         <VariableProximity
@@ -148,4 +148,5 @@ const ServiceSummary = () => {
   );
 };
 
-export default ServiceSummary;
+export default ServiceSummary;  
+

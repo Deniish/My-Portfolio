@@ -193,20 +193,28 @@ const DenishSignature = ({ cardNavRef, onComplete, onIntroStart }) => { // ★ a
         }
 
       // CARDNAV
-      if (cardNavRef?.current) {
-        tl.set(cardNavRef.current, { y: -100, autoAlpha: 0, clearProps: "all" });
-        tl.to(
-          cardNavRef.current,
-          {
-            y: 0,
-            autoAlpha: 1,
-            duration: 1,
-            ease: "power3.out",
-            clearProps: "transform,opacity,visibility",
-          },
-          "taglineDone-=5.5"
-        );
-      }
+        if (cardNavRef?.current) {
+          tl.set(cardNavRef.current, {
+            y: -60,
+            opacity: 0,
+            filter: "blur(6px)",  
+            clearProps: "all",         // <--- IMPORTANT FIX
+          });
+
+          tl.to(
+            cardNavRef.current,
+            {
+              y: 0,
+              opacity: 1,
+              filter: "blur(0px)",
+              duration: 1.4,
+              ease: "power4.out",
+              clearProps: "transform,opacity,visibility",     // keep transform & opacity intact
+            },
+            "taglineDone-=5.5"
+          );
+        }
+
 
       // ✅ optional callback prop
       if (onComplete) {
