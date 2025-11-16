@@ -1,16 +1,22 @@
-import { useRef } from "react";
+import { useRef, useLayoutEffect } from "react";
 import AnimatedHeaderSection from "../components/AnimatedHeaderSection";
 import { servicesData } from "../constants";
 import { useMediaQuery } from "react-responsive";
-import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+// register once
+gsap.registerPlugin(ScrollTrigger);
+
 const Services = () => {
   const text = `I build secure, high-performance full-stack apps
     with smooth UX to drive growth 
     not headaches.`;
+
   const serviceRefs = useRef([]);
-  const isDesktop = useMediaQuery({ minWidth: "48rem" }); //768px
-  useGSAP(() => {
+  const isDesktop = useMediaQuery({ minWidth: "48rem" });
+
+  useLayoutEffect(() => {
     serviceRefs.current.forEach((el) => {
       if (!el) return;
 
@@ -25,6 +31,7 @@ const Services = () => {
       });
     });
   }, []);
+
   return (
     <section id="services" className="min-h-screen bg-black rounded-t-4xl">
       <AnimatedHeaderSection
@@ -34,6 +41,7 @@ const Services = () => {
         textColor={"text-white"}
         withScrollTrigger={true}
       />
+
       {servicesData.map((service, index) => (
         <div
           ref={(el) => (serviceRefs.current[index] = el)}
@@ -54,6 +62,7 @@ const Services = () => {
               <p className="text-xl leading-relaxed tracking-widest lg:text-2xl text-white/60 text-pretty">
                 {service.description}
               </p>
+
               <div className="flex flex-col gap-2 text-2xl sm:gap-4 lg:text-3xl text-white/80">
                 {service.items.map((item, itemIndex) => (
                   <div key={`item-${index}-${itemIndex}`}>
@@ -63,12 +72,14 @@ const Services = () => {
                       </span>
                       {item.title}
                     </h3>
+
                     {itemIndex < service.items.length - 1 && (
                       <div className="w-full h-px my-2 bg-white/30" />
                     )}
                   </div>
                 ))}
               </div>
+
             </div>
           </div>
         </div>
