@@ -66,7 +66,6 @@ export default function App() {
 
       {/* Global Loader */}
       <Loader isVisible={loading} />
-
       {/* Toasts */}
       <Toaster position="top-right" />
       <Navbar />

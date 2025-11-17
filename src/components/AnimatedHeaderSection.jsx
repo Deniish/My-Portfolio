@@ -19,31 +19,34 @@ const AnimatedHeaderSection = ({
   const titleParts = shouldSplitTitle ? title.split(" ") : [title];
 
   useLayoutEffect(() => {
-    const tl = gsap.timeline({
-      scrollTrigger: withScrollTrigger
-        ? {
-            trigger: contextRef.current,
-          }
-        : undefined,
-    });
+    /** IMPORTANT FIX: wrap animation inside gsap.context */
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({
+        scrollTrigger: withScrollTrigger
+          ? { trigger: contextRef.current }
+          : undefined,
+      });
 
-    tl.from(contextRef.current, {
-      y: "50vh",
-      duration: 1,
-      ease: "circ.out",
-    });
-
-    tl.from(
-      headerRef.current,
-      {
-        opacity: 0,
-        y: 200,
+      tl.from(contextRef.current, {
+        y: "50vh",
         duration: 1,
         ease: "circ.out",
-      },
-      "<+0.2"
-    );
-  }, []);
+      });
+
+      tl.from(
+        headerRef.current,
+        {
+          opacity: 0,
+          y: 200,
+          duration: 1,
+          ease: "circ.out",
+        },
+        "<+0.2"
+      );
+    }, contextRef);
+
+    return () => ctx.revert();
+  }, [withScrollTrigger]);
 
   return (
     <div ref={contextRef}>

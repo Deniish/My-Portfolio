@@ -21,7 +21,7 @@ export default function BackgroundLayer({ visible = true }) {
           disableRotation={false}
         />
       </div>
-      <RippleBackground />
+      {/* <RippleBackground /> */}
       <div className="absolute inset-0 pointer-events-none grain-overlay z-5" />
     </Suspense>
   );

@@ -112,6 +112,7 @@
   color: #000;
 }
 
+/* CTA Button */
 .card-nav-cta-button {
   position: relative;
   display: inline-flex;
@@ -128,34 +129,45 @@
   font-weight: 550;
   text-decoration: none;
   cursor: pointer;
-  overflow: hidden; /* hides sliding text */
-   min-width: 120px;
+  overflow: hidden; /* important for sliding animation */
+  min-width: 120px;
+}
+/* DEFAULT text */
+.card-cta-text-default {
+  display: block;
+  font-weight: 300;
+  color: #d1d1d1;
+  transform: translateY(0);
+  opacity: 1;
+  transition: all 0.45s cubic-bezier(.4, 0, .2, 1);
+  pointer-events: none;
 }
 
-.card-nav-cta-button span {
+/* HOVER text */
+.card-cta-text-hover {
   position: absolute;
-  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, 10%);  /* smaller start distance */
+  font-weight: 400;
+  color: #ffffff;
+  filter: brightness(500%);
+  opacity: 0;
+  transition: all 0.45s cubic-bezier(.4, 0, .2, 1);
+  pointer-events: none;
 }
 
-.card-nav-cta-button span:first-child {
-  transform: translateY(0);
-  opacity: 1;
-}
-
-.card-nav-cta-button span:last-child {
-  transform: translateY(100%);
+/* ANIMATION */
+.card-nav-cta-button:hover .card-cta-text-default {
+  transform: translateY(-40%);   /* smaller upward movement */
   opacity: 0;
 }
 
-.card-nav-cta-button:hover span:first-child {
-  transform: translateY(-100%);
-  opacity: 0;
-}
-
-.card-nav-cta-button:hover span:last-child {
-  transform: translateY(0);
+.card-nav-cta-button:hover .card-cta-text-hover {
+  transform: translate(-50%, -50%); /* center */
   opacity: 1;
 }
+
 
 
 

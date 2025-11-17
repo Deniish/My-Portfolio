@@ -11,12 +11,15 @@ const ShinyText = ({
     <div
       className={`text-[#b5b5b5a4] bg-clip-text inline-block ${disabled ? '' : 'animate-shine'} ${className}`}
       style={{
-        backgroundImage:
-          'linear-gradient(120deg, rgba(255, 255, 255, 0) 40%, rgba(255, 255, 255, 0.8) 50%, rgba(255, 255, 255, 0) 60%)',
-        backgroundSize: '200% 100%',
-        WebkitBackgroundClip: 'text',
-        animationDuration,
-      }}
+  backgroundImage:
+    "linear-gradient(120deg, rgba(255,255,255,0) 35%, rgba(255,255,255,1) 50%, rgba(255,255,255,0) 65%)",
+  backgroundSize: "200% 100%",
+  WebkitBackgroundClip: "text",
+  animationDuration,
+}}
+
+
+
     >
       {children || text}
     </div>

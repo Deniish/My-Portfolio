@@ -1,0 +1,84 @@
+/* HoverEffects global CSS */
+
+/* blobs that trail the cursor */
+.he-blob {
+  position: absolute;
+  border-radius: 9999px;
+  color: antiquewhite;
+  filter: blur(24px);
+  transform-origin: center;
+  transition: transform 650ms cubic-bezier(.22,.9,.29,1), opacity 500ms ease;
+  will-change: transform, opacity;
+  z-index: 9999;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+
+/* default: blackish fog; you can override per-element via data-hover-color attribute */
+[data-hover] {
+  transition: color 350ms cubic-bezier(.2,.9,.2,1), transform 400ms cubic-bezier(.2,.9,.2,1);
+}
+
+/* when element has .hover-active (set by provider) apply liquid filter and other effects */
+[data-hover].hover-active,
+.hoverable.hover-active {
+  /* use the SVG filter we declared */
+  filter: url("#liquid-1") brightness(1.02);
+  /* small upward lift */
+  transform: translateY(-6px) scale(1.01);
+}
+
+/* Shiny text helper — brighter than before */
+.shiny-inline {
+  display: inline-block;
+  background-image: linear-gradient(120deg,
+     rgba(255,255,255,0) 35%,
+     rgba(255,255,255,0.95) 50%,
+     rgba(255,255,255,0) 65%);
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: rgba(255,255,255,0.12); /* fallback */
+  animation: shine-linear 2.5s linear infinite;
+  will-change: background-position;
+}
+
+/* faster sparkle when hovered */
+[data-hover].hover-active .shiny-inline {
+  animation-duration: 1.2s;
+  filter: drop-shadow(0 0 6px rgba(255,255,255,0.6));
+}
+
+/* brighter / stronger gradient (you asked for brighter) */
+.shiny-bright {
+  background-image: linear-gradient(120deg,
+     rgba(255,255,255,0.15) 30%,
+     rgba(255,255,255,1) 50%,
+     rgba(255,255,255,0.15) 70%);
+  background-size: 160% 100%;
+}
+
+/* animation */
+@keyframes shine-linear {
+  0% { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
+
+/* reduce motion & avoid heavy paint if user prefers reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .he-blob { display: none; }
+  [data-hover].hover-active { filter: none; transform: none; }
+  .shiny-inline { animation: none; }
+}
+
+/* make sure hovered elements don't clip the hover blob when sizing increases:
+   (You likely removed overflow:hidden earlier; keep it removed or allow visible) */
+.hoverable, [data-hover] {
+  overflow: visible;
+}
+
+/* Utility: choose light or dark blob color for element */
+[data-hover="light"] .he-blob,
+[data-hover][data-hover-color="light"] ~ .he-blob {
+  mix-blend-mode: screen;
+}

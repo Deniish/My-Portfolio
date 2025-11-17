@@ -1,4 +1,4 @@
-import { useRef, useLayoutEffect } from "react";
+import { useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/all";
 
@@ -8,28 +8,32 @@ export const AnimatedTextLines = ({ text, className }) => {
   const containerRef = useRef(null);
   const lineRefs = useRef([]);
 
-  const lines = text.split("\n").filter((line) => line.trim() !== "");
+  const lines = text.split("\n").filter((l) => l.trim() !== "");
 
   useLayoutEffect(() => {
-    gsap.from(lineRefs.current, {
-      y: 100,
-      opacity: 0,
-      duration: 1,
-      stagger: 0.3,
-      ease: "back.out",
-      scrollTrigger: {
-        trigger: containerRef.current,
-      },
-    });
+    const ctx = gsap.context(() => {
+      gsap.from(lineRefs.current, {
+        y: 100,
+        opacity: 0,
+        duration: 1,
+        stagger: 0.3,
+        ease: "back.out",
+        scrollTrigger: {
+          trigger: containerRef.current,
+        },
+      });
+    }, containerRef);
+
+    return () => ctx.revert();
   }, []);
 
   return (
     <div ref={containerRef} className={className}>
-      {lines.map((line, index) => (
+      {lines.map((line, i) => (
         <span
-          key={index}
-          ref={(el) => (lineRefs.current[index] = el)}
-          className="block leading-relaxed tracking-wide text-pretty"
+          key={i}
+          ref={(el) => (lineRefs.current[i] = el)}
+          className="block leading-relaxed tracking-wide"
         >
           {line}
         </span>

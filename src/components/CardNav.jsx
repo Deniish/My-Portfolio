@@ -224,15 +224,35 @@ const CardNav = forwardRef(
               <span className="menu-text">Link Tree</span>
             </div>
               
-            <a
-              href="/resume.pdf"
-              download="Denish_Sharma_Resume.pdf"
-              className="card-nav-cta-button"
-              onClick={() => toast.success("Download Completed!")}
-            >
-              <span>Resume</span>
-              <span>Download</span>
-            </a>
+          <a
+            className="card-nav-cta-button"
+            onClick={(e) => {
+              e.preventDefault(); // stop instant opening
+
+              toast.success("Opening Resume...");
+
+              setTimeout(() => {
+                window.open("/resume.pdf", "_blank", "noopener,noreferrer");
+              }, 700); // delay for animation/toast
+            }}
+          >
+            {/* default text */}
+            <div className="card-cta-text-default">
+              <ShinyText text="Resume" disabled={false} speed={1.3} />
+            </div>
+
+            {/* hover text */}
+            <div className="card-cta-text-hover">
+              <ShinyText
+                text="Resume"
+                disabled={false}
+                speed={0.7}
+                className="transition-all brightness-200"
+              />
+            </div>
+          </a>
+
+
           </div>
 
           <div className="card-nav-content" aria-hidden={!isExpanded}>

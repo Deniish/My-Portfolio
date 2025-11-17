@@ -1,43 +1,47 @@
-import { useRef, useLayoutEffect } from "react";
+import { useLayoutEffect, useRef } from "react";
 import AnimatedHeaderSection from "../components/AnimatedHeaderSection";
 import { servicesData } from "../constants";
 import { useMediaQuery } from "react-responsive";
 import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { ScrollTrigger } from "gsap/all";
 
-// register once
 gsap.registerPlugin(ScrollTrigger);
 
 const Services = () => {
-  const text = `I build secure, high-performance full-stack apps
-    with smooth UX to drive growth 
-    not headaches.`;
-
   const serviceRefs = useRef([]);
+  const containerRef = useRef(null);
   const isDesktop = useMediaQuery({ minWidth: "48rem" });
 
   useLayoutEffect(() => {
-    serviceRefs.current.forEach((el) => {
-      if (!el) return;
-
-      gsap.from(el, {
-        y: 200,
-        scrollTrigger: {
-          trigger: el,
-          start: "top 80%",
-        },
-        duration: 1,
-        ease: "circ.out",
+    let ctx = gsap.context(() => {
+      serviceRefs.current.forEach((el) => {
+        gsap.from(el, {
+          y: 200,
+          scrollTrigger: {
+            trigger: el,
+            start: "top 80%",
+          },
+          duration: 1,
+          ease: "circ.out",
+        });
       });
-    });
+    }, containerRef);
+
+    return () => ctx.revert();
   }, []);
 
   return (
-    <section id="services" className="min-h-screen bg-black rounded-t-4xl">
+    <section
+      ref={containerRef}
+      id="services"
+      className="min-h-screen bg-black rounded-t-4xl"
+    >
       <AnimatedHeaderSection
         subTitle={"Behind the scene, Beyond the screen"}
-        title={"Service"}
-        text={text}
+        title={"Services"}
+        text={`I build secure, high-performance full-stack apps
+with smooth UX to drive growth 
+not headaches.`}
         textColor={"text-white"}
         withScrollTrigger={true}
       />
@@ -59,13 +63,13 @@ const Services = () => {
           <div className="flex items-center justify-between gap-4 font-light">
             <div className="flex flex-col gap-6">
               <h2 className="text-4xl lg:text-5xl">{service.title}</h2>
-              <p className="text-xl leading-relaxed tracking-widest lg:text-2xl text-white/60 text-pretty">
+              <p className="text-xl leading-relaxed tracking-widest lg:text-2xl text-white/60">
                 {service.description}
               </p>
 
               <div className="flex flex-col gap-2 text-2xl sm:gap-4 lg:text-3xl text-white/80">
                 {service.items.map((item, itemIndex) => (
-                  <div key={`item-${index}-${itemIndex}`}>
+                  <div key={itemIndex}>
                     <h3 className="flex">
                       <span className="mr-12 text-lg text-white/30">
                         0{itemIndex + 1}
@@ -79,7 +83,6 @@ const Services = () => {
                   </div>
                 ))}
               </div>
-
             </div>
           </div>
         </div>

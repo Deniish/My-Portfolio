@@ -96,3 +96,10 @@
   font-family: 'Poppins-Light'; /* Give your font a name */
   src: url('/fonts/Poppins/Poppins-Light.ttf') format('truetype');
 }
+
+
+/*-----------------figtreeblack--------------*/
+@font-face {
+  font-family: 'figtreeblack'; /* Give your font a name */
+  src: url('/fonts/figtreeblack/figtreeblack.ttf') format('truetype');
+}
