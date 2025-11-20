@@ -11,6 +11,7 @@ import { ScrollTrigger } from "gsap/all";
 import LightLoader from "./Design/Loader";
 import Navbar from "./components/Navbar";
 import Services from "./components/Services";
+import RippleBackground from "./Design/RippleBackground";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -66,6 +67,7 @@ export default function App() {
 
       {/* Global Loader */}
       <Loader isVisible={loading} />
+      {/* <RippleBackground /> */}
       {/* Toasts */}
       <Toaster position="top-right" />
       <Navbar />

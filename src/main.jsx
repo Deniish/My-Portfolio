@@ -6,7 +6,7 @@ import RippleBackground from './Design/RippleBackground.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <RippleBackground />
+    {/* <RippleBackground /> */}
     <App />
   </StrictMode>,
 )

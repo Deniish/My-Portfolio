@@ -1,84 +1,203 @@
-/* HoverEffects global CSS */
+/* RippleBackground.css */
 
-/* blobs that trail the cursor */
-.he-blob {
-  position: absolute;
-  border-radius: 9999px;
-  color: antiquewhite;
-  filter: blur(24px);
-  transform-origin: center;
-  transition: transform 650ms cubic-bezier(.22,.9,.29,1), opacity 500ms ease;
-  will-change: transform, opacity;
-  z-index: 9999;
-  mix-blend-mode: multiply;
+.liquid-cursor-root { 
+  position: relative; 
+  pointer-events: auto; 
+}
+.trail-wrap { 
+  position: fixed; 
+  left: 0; 
+  top: 0; 
+  width: 100%; 
+  height: 100%; 
+  z-index: 9999; 
+  pointer-events: none; 
+  mix-blend-mode: normal; 
+}
+.trail-wrap .trail-blob { 
+  position: absolute; 
+  width: 50px; 
+  height: 50px; 
+  background: rgba(0,0,0,0.78); 
+  transform: translate3d(-9999px,-9999px,0); 
+  will-change: transform, opacity; 
+  box-shadow: 0 2px 16px rgba(0,0,0,0.2); 
+  border-radius: 42% 58% 70% 30% / 45% 60% 40% 55%;
+  animation: blob-morph 4s ease-in-out infinite;
+  transition: opacity 0.4s ease;
+}
+
+@keyframes blob-morph {
+  0%, 100% { border-radius: 42% 58% 70% 30% / 45% 60% 40% 55%; }
+  25% { border-radius: 58% 42% 30% 70% / 55% 40% 60% 45%; }
+  50% { border-radius: 45% 55% 60% 40% / 50% 45% 55% 50%; }
+  75% { border-radius: 55% 45% 40% 60% / 60% 50% 50% 40%; }
+}
+
+.main-blob { 
+  position: fixed; 
+  left: 0; 
+  top: 0; 
+  width: 80px; 
+  height: 80px; 
+  background: #000; 
+  transform: translate3d(-9999px,-9999px,0); 
+  will-change: transform, opacity; 
+  z-index: 10000; 
+  pointer-events: none; 
+  box-shadow: 0 8px 35px rgba(0,0,0,0.35); 
+  border-radius: 38% 62% 63% 37% / 41% 44% 56% 59%;
+  animation: main-blob-morph 5s ease-in-out infinite;
+  transition: opacity 0.5s ease, transform 0.3s cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+
+@keyframes main-blob-morph {
+  0%, 100% { border-radius: 38% 62% 63% 37% / 41% 44% 56% 59%; }
+  20% { border-radius: 62% 38% 55% 45% / 59% 56% 44% 41%; }
+  40% { border-radius: 45% 55% 48% 52% / 52% 48% 52% 48%; }
+  60% { border-radius: 55% 45% 62% 38% / 48% 52% 48% 52%; }
+  80% { border-radius: 50% 50% 45% 55% / 55% 45% 55% 45%; }
+}
+
+
+/* ===== INTERACTIVE MODE - Over buttons/links ===== */
+.main-blob.interactive-mode {
+  width: 110px;
+  height: 110px;
+  background: radial-gradient(circle at center,
+    #000 0%,
+    #000 7%,
+    transparent 5%,
+    transparent 25%,
+    rgba(0, 0, 0, 0.15) 30%,
+    rgba(0, 0, 0, 0.25) 35%,
+    rgba(0, 0, 0, 0.35) 40%,
+    rgba(0, 0, 0, 0.45) 45%,
+    rgba(0, 0, 0, 0.55) 50%);
+  border-radius: 50%;
+  animation: none;
+  box-shadow: 
+    inset 0 0 20px rgba(0, 0, 0, 0.3),
+    0 0 30px rgba(0, 0, 0, 0.2);
+}
+
+
+.bubble-wrap { 
+  position: fixed; 
+  left: 0; 
+  top: 0; 
+  width: 100%; 
+  height: 100%; 
+  z-index: 9998; 
+  pointer-events: none; 
+  transition: opacity 0.2s ease;
+}
+.bubble { 
+  position: absolute; 
+  border-radius: 50%; 
+  border: 1px solid rgba(0,0,0,0.9); 
+  background: rgba(0,0,0,0.04); 
+  will-change: transform, opacity; 
+  transition: opacity 0.3s ease;
+}
+
+
+
+.trail-blob, .main-blob, .bubble { contain: paint; }
+
+@media (max-width: 900px) {
+  .liquid-cursor-root { display: none; }
+  body { cursor: auto !important; }
+}
+
+.liquid-cursor-root {
+  position: relative;
+  pointer-events: auto; /* FIX */
+}
+
+/* ===== CONTENT WRAP ===== */
+.content-wrap {
+  pointer-events: auto;
+  position: relative;
+  z-index: 1;
+}
+
+/* ===== OPTIMIZATION ===== */
+.trail-blob,
+.main-blob,
+.bubble {
+  contain: paint;
+}
+
+.main-blob {
+  pointer-events: none !important; /* It should NEVER block clicks */
+}
+.trail-wrap,
+.bubble-wrap {
+  pointer-events: none !important;
+}
+/* ===== EYES CONTAINER ===== */
+.eye-container {
+  position: fixed;
+  z-index: 10001;
+  display: flex;
+  gap: 30px;
   pointer-events: none;
+  will-change: left, top, opacity;
+  transition: opacity 0.2s ease;
 }
 
-/* default: blackish fog; you can override per-element via data-hover-color attribute */
-[data-hover] {
-  transition: color 350ms cubic-bezier(.2,.9,.2,1), transform 400ms cubic-bezier(.2,.9,.2,1);
+/* ===== EYE WHITES ===== */
+.eye-white {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  will-change: transform;
+  transition: transform 0.15s ease;
 }
 
-/* when element has .hover-active (set by provider) apply liquid filter and other effects */
-[data-hover].hover-active,
-.hoverable.hover-active {
-  /* use the SVG filter we declared */
-  filter: url("#liquid-1") brightness(1.02);
-  /* small upward lift */
-  transform: translateY(-6px) scale(1.01);
+.eye-white.blink {
+  transform: scaleY(0.1);
 }
 
-/* Shiny text helper — brighter than before */
-.shiny-inline {
-  display: inline-block;
-  background-image: linear-gradient(120deg,
-     rgba(255,255,255,0) 35%,
-     rgba(255,255,255,0.95) 50%,
-     rgba(255,255,255,0) 65%);
-  background-size: 220% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: rgba(255,255,255,0.12); /* fallback */
-  animation: shine-linear 2.5s linear infinite;
-  will-change: background-position;
+/* ===== EYE PUPILS ===== */
+.eye-pupil {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: #333;
+  border-radius: 50%;
+  will-change: transform;
+  transition: none;
 }
 
-/* faster sparkle when hovered */
-[data-hover].hover-active .shiny-inline {
-  animation-duration: 1.2s;
-  filter: drop-shadow(0 0 6px rgba(255,255,255,0.6));
+/* ===== EYE GLINT ===== */
+.eye-glint {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: white;
+  border-radius: 50%;
+  top: 2px;
+  left: 2px;
+  opacity: 0.8;
 }
 
-/* brighter / stronger gradient (you asked for brighter) */
-.shiny-bright {
-  background-image: linear-gradient(120deg,
-     rgba(255,255,255,0.15) 30%,
-     rgba(255,255,255,1) 50%,
-     rgba(255,255,255,0.15) 70%);
-  background-size: 160% 100%;
-}
 
-/* animation */
-@keyframes shine-linear {
-  0% { background-position: 100% 0; }
-  100% { background-position: -100% 0; }
-}
 
-/* reduce motion & avoid heavy paint if user prefers reduced motion */
-@media (prefers-reduced-motion: reduce) {
-  .he-blob { display: none; }
-  [data-hover].hover-active { filter: none; transform: none; }
-  .shiny-inline { animation: none; }
-}
 
-/* make sure hovered elements don't clip the hover blob when sizing increases:
-   (You likely removed overflow:hidden earlier; keep it removed or allow visible) */
-.hoverable, [data-hover] {
-  overflow: visible;
-}
 
-/* Utility: choose light or dark blob color for element */
-[data-hover="light"] .he-blob,
-[data-hover][data-hover-color="light"] ~ .he-blob {
-  mix-blend-mode: screen;
-}
+
+
+
+
+
+
+
+

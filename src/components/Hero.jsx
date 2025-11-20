@@ -63,7 +63,7 @@ export default function Hero() {
         {/* Signature centered */}
         {bgVisible && (
           <div className="relative z-10 flex flex-col items-center justify-center w-full max-w-xs p-0 m-0 signature-wrapper sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl">
-            <DenishSignature cardNavRef={cardNavRef} />
+            <DenishSignature cardNavRef={cardNavRef}  />
           </div>
 
 

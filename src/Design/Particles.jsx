@@ -80,7 +80,7 @@ const Particles = ({
   speed = 0.1,
   particleColors,
   moveParticlesOnHover = false,
-  particleHoverFactor = 1,
+  particleHoverFactor = 0.3,
   alphaParticles = false,
   particleBaseSize = 100,
   sizeRandomness = 1,
@@ -90,6 +90,8 @@ const Particles = ({
 }) => {
   const containerRef = useRef(null);
   const mouseRef = useRef({ x: 0, y: 0 });
+  const targetPosRef = useRef({ x: 0, y: 0 });
+  const currentPosRef = useRef({ x: 0, y: 0 });
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
@@ -117,6 +119,12 @@ const Particles = ({
       const x = (e.clientX / window.innerWidth) * 2 - 1;
       const y = -((e.clientY / window.innerHeight) * 2 - 1);
       mouseRef.current = { x, y };
+      
+      // Set target position - particles will smoothly lerp to this
+      targetPosRef.current = {
+        x: -x * particleHoverFactor,
+        y: -y * particleHoverFactor,
+      };
     };
 
     if (moveParticlesOnHover) {
@@ -188,8 +196,13 @@ const Particles = ({
       program.uniforms.uTime.value = elapsed * 0.001;
 
       if (moveParticlesOnHover) {
-        particles.position.x = -mouseRef.current.x * particleHoverFactor;
-        particles.position.y = -mouseRef.current.y * particleHoverFactor;
+        // Smooth lerp to target position (0.1 = smooth easing factor)
+        const smoothFactor = 0.1;
+        currentPosRef.current.x += (targetPosRef.current.x - currentPosRef.current.x) * smoothFactor;
+        currentPosRef.current.y += (targetPosRef.current.y - currentPosRef.current.y) * smoothFactor;
+        
+        particles.position.x = currentPosRef.current.x;
+        particles.position.y = currentPosRef.current.y;
       }
 
       if (!disableRotation) {

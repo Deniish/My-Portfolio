@@ -1,0 +1,917 @@
+import { useEffect, useRef } from "react";
+
+export default function RippleBackground() {
+  const canvasRef = useRef(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    let ripples = [];
+
+    const handleMouseMove = (e) => {
+      ripples.push({ x: e.clientX, y: e.clientY, r: 0, alpha: 1 });
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      ripples.forEach((ripple, i) => {
+        ctx.beginPath();
+        ctx.arc(ripple.x, ripple.y, ripple.r, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(255, 255, 255, ${ripple.alpha})`;
+        ctx.stroke();
+
+        ripple.r += 2;
+        ripple.alpha -= 0.02;
+
+        if (ripple.alpha <= 0) ripples.splice(i, 1);
+      });
+
+      requestAnimationFrame(draw);
+    }
+    draw();
+
+    const handleResize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100vw",
+        height: "100vh",
+        pointerEvents: "none", // so UI stays clickable
+        zIndex: 99999,         // BIG z-index, now appears on TOP of everything
+      }}
+    />
+  );
+}
+
+
+
+
+
+// // HoverEffectsProvider.js-----not woorking
+// import React, { useEffect, useRef } from "react";
+// import "../Styles/RippleBackground.css";
+// /**
+//  * HoverEffectsProvider
+//  * - Renders SVG <defs> for a displacement/liquid filter
+//  * - Creates a pool of trailing "blobs" (divs) that follow pointer when hovering elements with [data-hover]
+//  * - Adds/removes a `.hover-active` class on the hovered element to trigger CSS transitions & filters
+//  *
+//  * Usage: wrap <HoverEffectsProvider> around your app or include it once at root.
+//  */
+
+// const NUM_BLOBS = 6; // pool size
+// const BLOB_LIFETIME = 900; // ms
+// const BLOB_SIZE = 120; // base px (will be scaled)
+
+// export default function RippleBackground() {
+//   const overlayRef = useRef(null);
+//   const blobsRef = useRef([]);
+//   const rafRef = useRef(null);
+//   const mouse = useRef({ x: -9999, y: -9999, vx: 0, vy: 0 });
+//   const activeTargetRef = useRef(null);
+
+//   useEffect(() => {
+//     // create blob elements
+//     const overlay = overlayRef.current;
+//     blobsRef.current = [];
+//     for (let i = 0; i < NUM_BLOBS; i++) {
+//       const b = document.createElement("div");
+//       b.className = "he-blob";
+//       b.style.opacity = "0";
+//       b.style.position = "absolute";
+//       b.style.left = "0px";
+//       b.style.top = "0px";
+//       b.style.pointerEvents = "none";
+//       overlay.appendChild(b);
+//       blobsRef.current.push({ el: b, busy: false });
+//     }
+
+//     let lastTime = performance.now();
+//     let stashIndex = 0;
+
+//     // animation loop to lerp blob positions & fade them out
+//     function frame(t) {
+//       const dt = Math.min(40, t - lastTime);
+//       lastTime = t;
+
+//       // smooth mouse motion / velocity
+//       mouse.current.vx += (mouse.current.tx - mouse.current.x) * 0.15;
+//       mouse.current.vy += (mouse.current.ty - mouse.current.y) * 0.15;
+//       mouse.current.x += mouse.current.vx * (dt / 16);
+//       mouse.current.y += mouse.current.vy * (dt / 16);
+
+//       // update each active blob (they have CSS transitions for scale/blur/opacity)
+//       // Not strictly necessary to update every frame for CSS-only transitions,
+//       // but we position the blob elements here.
+//       blobsRef.current.forEach((bobj) => {
+//         const el = bobj.el;
+//         const meta = bobj.meta;
+//         if (!meta || !meta.alive) return;
+//         // move toward assigned pos
+//         const s = 0.2;
+//         meta.x += (meta.tx - meta.x) * s;
+//         meta.y += (meta.ty - meta.y) * s;
+//         el.style.transform = `translate3d(${meta.x - meta.r}px, ${meta.y - meta.r}px, 0) scale(${meta.scale})`;
+//         // lifetime handling
+//         const elapsed = t - meta.start;
+//         const p = Math.min(1, elapsed / meta.life);
+//         el.style.opacity = String(1 - p);
+//         if (p >= 1) {
+//           meta.alive = false;
+//           el.style.opacity = "0";
+//         }
+//       });
+
+//       rafRef.current = requestAnimationFrame(frame);
+//     }
+
+//     rafRef.current = requestAnimationFrame(frame);
+
+//     // pointer handlers
+//     function onMove(e) {
+//       if (e.touches && e.touches[0]) {
+//         mouse.current.tx = e.touches[0].clientX;
+//         mouse.current.ty = e.touches[0].clientY;
+//       } else {
+//         mouse.current.tx = e.clientX;
+//         mouse.current.ty = e.clientY;
+//       }
+
+//       // spawn a blob if over an active hover target
+//       if (activeTargetRef.current) {
+//         // get a free blob
+//         const free = blobsRef.current.find((b) => !b.meta || !b.meta.alive);
+//         if (free) {
+//           const el = free.el;
+//           const size = BLOB_SIZE * (0.8 + Math.random() * 1.2);
+//           const start = performance.now();
+//           free.meta = {
+//             alive: true,
+//             start,
+//             life: BLOB_LIFETIME * (0.8 + Math.random() * 0.6),
+//             x: mouse.current.tx,
+//             y: mouse.current.ty,
+//             tx: mouse.current.tx + (Math.random() - 0.5) * 20,
+//             ty: mouse.current.ty + (Math.random() - 0.5) * 20,
+//             r: size / 2,
+//             scale: 0.6 + Math.random() * 0.9,
+//           };
+//           el.style.width = `${size}px`;
+//           el.style.height = `${size}px`;
+//           el.style.opacity = "1";
+//           // style tweaks per hovered target (can be extended)
+//           if (activeTargetRef.current.dataset.hoverColor === "light") {
+//             el.style.background = "rgba(255,255,255,0.9)";
+//             el.style.mixBlendMode = "screen";
+//           } else {
+//             el.style.background = "rgba(0,0,0,0.65)";
+//             el.style.mixBlendMode = "multiply";
+//           }
+//           // jitter transform to start
+//           el.style.transform = `translate3d(${free.meta.x - free.meta.r}px, ${free.meta.y - free.meta.r}px,0) scale(${free.meta.scale})`;
+//         }
+//       }
+//     }
+
+//     function onEnter(e) {
+//       // const t = e.target.closest?.(?.matches ? null : null); // noop for older envs
+//       const el = e.target.closest && e.target.closest("[data-hover], .hoverable");
+//       if (el) {
+//         activeTargetRef.current = el;
+//         el.classList.add("hover-active");
+//       }
+//     }
+//     function onLeave(e) {
+//       const el = e.target.closest && e.target.closest("[data-hover], .hoverable");
+//       if (el && activeTargetRef.current === el) {
+//         el.classList.remove("hover-active");
+//         activeTargetRef.current = null;
+//       }
+//     }
+
+//     // use pointer events on document
+//     document.addEventListener("pointermove", onMove, { passive: true });
+//     document.addEventListener("pointerenter", onEnter, true);
+//     document.addEventListener("pointerleave", onLeave, true);
+
+//     // cleanup
+//     return () => {
+//       cancelAnimationFrame(rafRef.current);
+//       document.removeEventListener("pointermove", onMove);
+//       document.removeEventListener("pointerenter", onEnter, true);
+//       document.removeEventListener("pointerleave", onLeave, true);
+//       // remove blobs
+//       blobsRef.current.forEach((b) => {
+//         if (b.el && overlay.contains(b.el)) overlay.removeChild(b.el);
+//       });
+//     };
+//   }, []);
+
+//   return (
+//     <>
+//       {/* SVG filter for liquid displacement — applied via CSS filter: url(#liquid) */}
+//       <svg style={{ position: "absolute", width: 0, height: 0 }}>
+//         <defs>
+//           <filter id="liquid-1">
+//             {/* subtle turbulence + displacement */}
+//             <feTurbulence
+//               type="fractalNoise"
+//               baseFrequency="0.8"
+//               numOctaves="1"
+//               result="noise"
+//             />
+//             <feDisplacementMap
+//               in="SourceGraphic"
+//               in2="noise"
+//               scale="10"
+//               xChannelSelector="R"
+//               yChannelSelector="G"
+//             />
+//           </filter>
+//         </defs>
+//       </svg>
+
+//       {/* overlay that holds blob elements */}
+//       <div
+//         ref={overlayRef}
+//         aria-hidden
+//         style={{
+//           position: "fixed",
+//           inset: 0,
+//           pointerEvents: "none",
+//           zIndex: 9998,
+//         }}
+//       />
+//     </>
+//   );
+// }
+
+
+/*css*/
+/* HoverEffects global CSS */
+
+/* blobs that trail the cursor */
+.he-blob {
+  position: absolute;
+  border-radius: 9999px;
+  color: antiquewhite;
+  filter: blur(24px);
+  transform-origin: center;
+  transition: transform 650ms cubic-bezier(.22,.9,.29,1), opacity 500ms ease;
+  will-change: transform, opacity;
+  z-index: 9999;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+
+/* default: blackish fog; you can override per-element via data-hover-color attribute */
+[data-hover] {
+  transition: color 350ms cubic-bezier(.2,.9,.2,1), transform 400ms cubic-bezier(.2,.9,.2,1);
+}
+
+/* when element has .hover-active (set by provider) apply liquid filter and other effects */
+[data-hover].hover-active,
+.hoverable.hover-active {
+  /* use the SVG filter we declared */
+  filter: url("#liquid-1") brightness(1.02);
+  /* small upward lift */
+  transform: translateY(-6px) scale(1.01);
+}
+
+/* Shiny text helper — brighter than before */
+.shiny-inline {
+  display: inline-block;
+  background-image: linear-gradient(120deg,
+     rgba(255,255,255,0) 35%,
+     rgba(133, 133, 133, 0.95) 50%,
+     rgba(255,255,255,0) 65%);
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: rgba(255,255,255,0.12); /* fallback */
+  animation: shine-linear 2.5s linear infinite;
+  will-change: background-position;
+}
+
+/* faster sparkle when hovered */
+[data-hover].hover-active .shiny-inline {
+  animation-duration: 1.2s;
+  filter: drop-shadow(0 0 6px rgba(255,255,255,0.6));
+}
+
+/* brighter / stronger gradient (you asked for brighter) */
+.shiny-bright {
+  background-image: linear-gradient(120deg,
+     rgba(255,255,255,0.15) 30%,
+     rgba(255,255,255,1) 50%,
+     rgba(255,255,255,0.15) 70%);
+  background-size: 160% 100%;
+}
+
+/* animation */
+@keyframes shine-linear {
+  0% { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
+
+/* reduce motion & avoid heavy paint if user prefers reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .he-blob { display: none; }
+  [data-hover].hover-active { filter: none; transform: none; }
+  .shiny-inline { animation: none; }
+}
+
+/* make sure hovered elements don't clip the hover blob when sizing increases:
+   (You likely removed overflow:hidden earlier; keep it removed or allow visible) */
+.hoverable, [data-hover] {
+  overflow: visible;
+}
+
+/* Utility: choose light or dark blob color for element */
+[data-hover="light"] .he-blob,
+[data-hover][data-hover-color="light"] ~ .he-blob {
+  mix-blend-mode: screen;
+}
+
+
+
+/*-----------------------------------------blob---------------------------------*/
+
+import React, { useEffect, useRef, useState, useCallback } from 'react';
+import "../Styles/RippleBackground.css";
+
+
+export default function RippleBackground({ children }) {
+  const disabledOnTouch = useRef(false);
+  const mouse = useRef({ x: -9999, y: -9999, down: false, isInteractive: false });
+  const blobs = useRef([]);           // trail vector list
+  const particles = useRef([]);       // bubble particle list
+  const rafRef = useRef(null);
+  const lastPointerTime = useRef(0);
+  const lastMoveTime = useRef(0);
+  const maxTrail = 22;
+  const containerRef = useRef(null);
+  const [enabled, setEnabled] = useState(true);
+  const isOverInteractive = useRef(false);
+  const idleTimeoutRef = useRef(null);
+  const [isIdle, setIsIdle] = useState(false);
+
+  // DOM refs
+  const mainBlobRef = useRef(null);
+  const trailContainerRef = useRef(null);
+  const bubbleContainerRef = useRef(null);
+
+  // scroll detection (Lenis/native)
+  const isScrollingRef = useRef(false);
+  const scrollTimerRef = useRef(null);
+  const SCROLL_REDUCE_TIMEOUT = 150; // ms
+
+  // --- Helper: detect whether an element should be considered "interactive"
+  // Works for buttons, links, inputs, images/icons with cursor:pointer, onclick handlers, tabindex, role=button, or inside interactive tags.
+  function isElementInteractive(el) {
+    if (!el) return false;
+    try {
+      const tag = (el.tagName || '').toUpperCase();
+      if (tag === 'BUTTON' || tag === 'A' || tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return true;
+      if (el.getAttribute && el.getAttribute('role') === 'button') return true;
+      if (el.getAttribute && el.getAttribute('tabindex') !== null) return true;
+      if (el.onclick) return true;
+      const cs = window.getComputedStyle(el);
+      if (cs && cs.cursor === 'pointer') return true;
+      // check ancestors for common interactive elements
+      if (el.closest && el.closest('button, a, input, textarea, select, [role="button"]')) return true;
+    } catch (e) {
+      // safety - if computed style throws for some node, ignore
+    }
+    return false;
+  }
+
+  // disable on touch / mobile devices
+  useEffect(() => {
+    const hasTouch = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+    if (hasTouch) {
+      disabledOnTouch.current = true;
+      setEnabled(false);
+      document.body.style.cursor = '';
+    } else {
+      // keep native cursor visible (you said don't hide)
+      document.body.style.cursor = 'auto';
+    }
+    return () => { document.body.style.cursor = ''; };
+  }, []);
+
+  // Pointer move handler (throttled)
+  const handlePointerMove = useCallback((e) => {
+    if (disabledOnTouch.current) return;
+    const now = performance.now();
+    if (now - lastPointerTime.current < 16) return; // ~60fps throttle
+    lastPointerTime.current = now;
+    lastMoveTime.current = now;
+
+    // reset idle
+    setIsIdle(false);
+    clearTimeout(idleTimeoutRef.current);
+    idleTimeoutRef.current = setTimeout(() => { setIsIdle(true); }, 200);
+
+    const x = e.clientX;
+    const y = e.clientY;
+    mouse.current.x = x;
+    mouse.current.y = y;
+
+    // add to trail buffer
+    blobs.current.push({ x, y, t: now, id: now + Math.random() });
+    if (blobs.current.length > maxTrail) blobs.current.shift();
+
+    // spawn bubble occasionally (reduced by scroll elsewhere)
+    if (Math.random() < 0.08) {
+      particles.current.push({
+        id: Date.now() + Math.random(),
+        x: x + (Math.random() - 0.5) * 40,
+        y: y + (Math.random() - 0.5) * 40,
+        r: 4 + Math.random() * 12,
+        vx: (Math.random() - 0.5) * 0.6,
+        vy: -0.3 - Math.random() * 0.6,
+        life: 1,
+      });
+    }
+
+    // Interaction detection (auto)
+    const el = document.elementFromPoint(x, y);
+    const interactive = isElementInteractive(el);
+    isOverInteractive.current = interactive;
+    mouse.current.isInteractive = interactive;
+
+    // if element is interactive and has bounding rect (like former GlassyHover), set its CSS vars so overlays work if you still have them elsewhere
+    if (interactive && el && el.getBoundingClientRect) {
+      const rect = el.getBoundingClientRect();
+      try {
+        el.style.setProperty('--mouse-x', `${x - rect.left}px`);
+        el.style.setProperty('--mouse-y', `${y - rect.top}px`);
+      } catch (err) {
+        // some SVG or read-only nodes may throw; ignore
+      }
+    }
+  }, []);
+
+  // Click / pointerdown effect (burst)
+  const handlePointerDown = useCallback((e) => {
+    if (disabledOnTouch.current) return;
+    mouse.current.down = true;
+    const x = e.clientX, y = e.clientY;
+    for (let i = 0; i < 8; i++) {
+      particles.current.push({
+        id: Date.now() + '-c-' + i + Math.random(),
+        x, y,
+        r: 6 + Math.random() * 8,
+        vx: (Math.random() - 0.5) * 3,
+        vy: -0.2 - Math.random() * 1.4,
+        life: 1,
+      });
+    }
+  }, []);
+
+  const handlePointerUp = useCallback(() => { mouse.current.down = false; }, []);
+
+  // attach pointer listeners
+  useEffect(() => {
+    if (!enabled) return;
+    window.addEventListener('pointermove', handlePointerMove, { passive: true });
+    window.addEventListener('pointerdown', handlePointerDown);
+    window.addEventListener('pointerup', handlePointerUp);
+    return () => {
+      window.removeEventListener('pointermove', handlePointerMove);
+      window.removeEventListener('pointerdown', handlePointerDown);
+      window.removeEventListener('pointerup', handlePointerUp);
+      clearTimeout(idleTimeoutRef.current);
+    };
+  }, [enabled, handlePointerMove, handlePointerDown, handlePointerUp]);
+
+  // Lenis/native scroll detection integration — reduces detail while scrolling
+  useEffect(() => {
+    let scrollTimer = null;
+    const onScroll = () => {
+      isScrollingRef.current = true;
+      clearTimeout(scrollTimer);
+      scrollTimer = setTimeout(() => { isScrollingRef.current = false; }, SCROLL_REDUCE_TIMEOUT);
+      if (scrollTimerRef) scrollTimerRef.current = scrollTimer;
+    };
+
+    // hook Lenis if present (common var names)
+    try {
+      const lenis = window?.lenis || window?.Lenis || null;
+      if (lenis && typeof lenis.on === 'function') {
+        lenis.on('scroll', () => {
+          isScrollingRef.current = true;
+          clearTimeout(scrollTimer);
+          scrollTimer = setTimeout(() => { isScrollingRef.current = false; }, SCROLL_REDUCE_TIMEOUT);
+          if (scrollTimerRef) scrollTimerRef.current = scrollTimer;
+        });
+      }
+    } catch (e) {
+      // ignore
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('wheel', onScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('wheel', onScroll);
+      if (scrollTimer) clearTimeout(scrollTimer);
+    };
+  }, []);
+
+  // animation loop - uses DOM nodes for trail & bubbles (no React state updates)
+  useEffect(() => {
+    const ease = (a, b, k) => a + (b - a) * k;
+
+    const loop = () => {
+      const mb = mainBlobRef.current;
+      // set dataset target coords for possible debugging/reading
+      if (mb) {
+        mb.dataset.tx = mouse.current.x;
+        mb.dataset.ty = mouse.current.y;
+      }
+
+      const detailFactor = isScrollingRef.current ? 0.35 : 1.0;
+
+      // TRAIL DOM update
+      const trailC = trailContainerRef.current;
+      if (trailC) {
+        const nodes = Array.from(trailC.children);
+        // reduce desired nodes when scrolling
+        const desiredCount = Math.max(1, Math.round(blobs.current.length * detailFactor));
+        while (nodes.length < desiredCount) {
+          const el = document.createElement('div');
+          el.className = 'trail-blob';
+          trailC.appendChild(el);
+          nodes.push(el);
+        }
+        // Do NOT remove nodes during scroll (prevents trail breaking)
+        
+          while (nodes.length > desiredCount) {
+            const rem = nodes.shift();
+            rem && rem.remove();
+          }
+        
+
+
+        for (let i = 0; i < nodes.length; i++) {
+          const target = blobs.current[blobs.current.length - 1 - i];
+          const node = nodes[i];
+          if (!target || !node) continue;
+          const cx = parseFloat(node.dataset.cx || target.x) || target.x;
+          const cy = parseFloat(node.dataset.cy || target.y) || target.y;
+          const k = 0.20 + (i / Math.max(1, blobs.current.length)) * 0.18;
+          const nx = ease(cx, target.x, k);
+          const ny = ease(cy, target.y, k);
+          const baseSize = 50;
+          const size = baseSize - (i * 1.5);
+          const offset = size / 2;
+          node.style.transform = `translate3d(${nx - offset}px, ${ny - offset}px, 0) scale(${1 - i * 0.015})`;
+          node.style.opacity = isScrollingRef.current
+            ? "0"
+            : `${Math.max(0, isIdle ? 0 : (1 - i * 0.04) * detailFactor)}`;
+
+          node.dataset.cx = nx;
+          node.dataset.cy = ny;
+        }
+      }
+
+      // MAIN BLOB update
+      if (mb) {
+        if (isScrollingRef.current) {
+          mb.style.opacity = 0;
+          return requestAnimationFrame(loop);
+        }
+        
+        const cx = parseFloat(mb.dataset.cx || mouse.current.x) || mouse.current.x;
+        const cy = parseFloat(mb.dataset.cy || mouse.current.y) || mouse.current.y;
+        const speed = mouse.current.down ? 0.45 : 0.33;
+        const nx = ease(cx, mouse.current.x, speed);
+        const ny = ease(cy, mouse.current.y, speed);
+
+        const baseScale = 1.05;
+        const interactiveScale = isOverInteractive.current ? 1.2 : 1.0;
+        const downScale = mouse.current.down ? 1.1 : 1.0;
+        const finalScale = baseScale * interactiveScale * downScale;
+
+        if (isOverInteractive.current) mb.classList.add("is-interactive");
+        else mb.classList.remove("is-interactive");
+
+        const opacity = isScrollingRef.current ? 0 : (isIdle ? 0 : 1);
+
+
+        mb.style.transform = `translate3d(${nx - 40}px, ${ny - 40}px, 0) scale(${finalScale})`;
+        mb.style.opacity = opacity;
+        mb.dataset.cx = nx;
+        mb.dataset.cy = ny;
+
+
+
+
+        // if (isOverInteractive.current) {
+        //   mb.classList.add('is-interactive');
+        // } else {
+        //   mb.classList.remove('is-interactive');
+        // }
+
+        // const opacity = isIdle ? 0 : (isScrollingRef.current ? 0.7 : 1.0);
+
+        // mb.style.transform = `translate3d(${nx - 40}px, ${ny - 40}px, 0) scale(${finalScale})`;
+        // mb.style.opacity = opacity;
+        // mb.dataset.cx = nx;
+        // mb.dataset.cy = ny;
+      }
+
+      // BUBBLE DOM update
+      const bubC = bubbleContainerRef.current;
+      if (bubC) {
+        const doms = Array.from(bubC.children);
+        // ensure dom nodes match particles length (we don't aggressively reduce doms during scroll to avoid churn)
+        while (doms.length < particles.current.length) {
+          const d = document.createElement('div');
+          d.className = 'bubble';
+          bubC.appendChild(d);
+          doms.push(d);
+        }
+        while (doms.length > particles.current.length) {
+          const rem = doms.shift();
+          rem && rem.remove();
+        }
+
+        for (let i = particles.current.length - 1; i >= 0; i--) {
+          const p = particles.current[i];
+          p.x += (p.vx || 0);
+          p.y += p.vy;
+          p.vy += -0.01 * 0.5;
+          // life decays faster while scrolling
+          p.life -= isScrollingRef.current ? 0.02 : 0.013;
+          const node = bubC.children[i];
+          if (!node) continue;
+          node.style.transform = `translate3d(${p.x - p.r}px, ${p.y - p.r}px, 0) scale(${Math.max(0.2, p.life)})`;
+          node.style.width = node.style.height = `${p.r * 2}px`;
+          node.style.opacity = `${Math.max(0, isIdle ? 0 : p.life * (isScrollingRef.current ? 0.8 : 1))}`;
+          if (p.life <= 0) {
+            particles.current.splice(i, 1);
+            node.remove();
+          }
+        }
+      }
+
+      rafRef.current = requestAnimationFrame(loop);
+    };
+
+    rafRef.current = requestAnimationFrame(loop);
+    return () => { if (rafRef.current) cancelAnimationFrame(rafRef.current); };
+  }, [isIdle]);
+
+  // periodic cleanup (trim arrays)
+  useEffect(() => {
+    const id = setInterval(() => {
+      if (blobs.current.length > maxTrail) blobs.current.splice(0, blobs.current.length - maxTrail);
+      if (particles.current.length > 80) particles.current.splice(0, particles.current.length - 80);
+    }, 800);
+    return () => clearInterval(id);
+  }, []);
+
+  // final render
+  return (
+    <div ref={containerRef} className="liquid-cursor-root">
+      {/* SVG filters for gooey + displacement */}
+      <svg style={{ position: 'absolute', width: 0, height: 0 }} aria-hidden>
+        <defs>
+          <filter id="gooey-effect">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="12" result="blur" />
+            <feColorMatrix in="blur" mode="matrix"
+              values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 20 -8" result="gooey" />
+            <feBlend in="SourceGraphic" in2="gooey" />
+          </filter>
+
+          <filter id="liquid-distortion">
+            <feTurbulence baseFrequency="0.8" numOctaves="1" seed="2" result="t" />
+            <feDisplacementMap in="SourceGraphic" in2="t" scale="8" xChannelSelector="R" yChannelSelector="G" />
+          </filter>
+        </defs>
+      </svg>
+
+      {/* trail (gooey) */}
+      <div className="trail-wrap" ref={trailContainerRef} style={{ filter: 'url(#gooey-effect)' }} />
+
+      {/* main blob */}
+      <div ref={mainBlobRef} className="main-blob" />
+
+      {/* bubble container */}
+      <div ref={bubbleContainerRef} className="bubble-wrap" />
+
+      {/* app children */}
+      <div className="content-wrap">{children}</div>
+    </div>
+  );
+}
+
+
+
+
+
+
+
+/* RippleBackground.css */
+
+.liquid-cursor-root {
+  position: relative; 
+  pointer-events: none; 
+}
+.trail-wrap {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+  pointer-events: none;
+  mix-blend-mode: normal;
+}
+.trail-wrap .trail-blob {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  background: rgba(0,0,0,0.78);
+  transform: translate3d(-9999px,-9999px,0);
+  will-change: transform, opacity;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.2);
+  border-radius: 42% 58% 70% 30% / 45% 60% 40% 55%;
+  animation: blob-morph 4s ease-in-out infinite;
+  transition: opacity 0.4s ease;
+}
+
+@keyframes blob-morph {
+  0%, 100% { border-radius: 42% 58% 70% 30% / 45% 60% 40% 55%; }
+  25% { border-radius: 58% 42% 30% 70% / 55% 40% 60% 45%; }
+  50% { border-radius: 45% 55% 60% 40% / 50% 45% 55% 50%; }
+  75% { border-radius: 55% 45% 40% 60% / 60% 50% 50% 40%; }
+}
+
+.main-blob {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 80px;
+  height: 80px;
+  background: #000;
+  transform: translate3d(-9999px,-9999px,0);
+  will-change: transform, opacity;
+  z-index: 10000;
+  pointer-events: none;
+  box-shadow: 0 8px 35px rgba(0,0,0,0.35);
+  border-radius: 38% 62% 63% 37% / 41% 44% 56% 59%;
+  animation: main-blob-morph 5s ease-in-out infinite;
+  transition: opacity 0.45s ease, transform 0.28s cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+
+/* gentle wobble when interactive - subtle, combines scale + tiny rotation + morph (keeps readability) */
+.main-blob.is-interactive {
+  animation: main-blob-morph 4.8s ease-in-out infinite;
+  /* we overlay a small pulse via pseudo transform to keep CSS transitions smooth */
+  transition: transform 0.12s cubic-bezier(.2,.9,.2,1);
+}
+.main-blob.is-interactive::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  /* tiny shine to emphasize interactivity */
+  box-shadow: 0 8px 28px rgba(0,0,0,0.25), inset 0 8px 24px rgba(255,255,255,0.02);
+  pointer-events: none;
+  transform-origin: 50% 50%;
+  animation: interactive-wobble 900ms ease-in-out infinite;
+}
+
+
+@keyframes interactive-wobble {
+  0% { transform: scale(1) rotate(0deg); }
+  30% { transform: scale(1.04) rotate(-0.6deg); }
+  60% { transform: scale(1.02) rotate(0.4deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+@keyframes main-blob-morph {
+  0%, 100% { border-radius: 38% 62% 63% 37% / 41% 44% 56% 59%; }
+  20% { border-radius: 62% 38% 55% 45% / 59% 56% 44% 41%; }
+  40% { border-radius: 45% 55% 48% 52% / 52% 48% 52% 48%; }
+  60% { border-radius: 55% 45% 62% 38% / 48% 52% 48% 52%; }
+  80% { border-radius: 50% 50% 45% 55% / 55% 45% 55% 45%; }
+}
+
+.bubble-wrap {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9998;
+  pointer-events: none;
+}
+.bubble {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(0,0,0,0.9);
+  background: rgba(0,0,0,0.04);
+  will-change: transform, opacity;
+  transition: opacity 0.3s ease;
+}
+
+/* glassy-hover references removed (you asked). Keep class if you use it elsewhere but it no longer has special JS glue here. */
+.glassy-hover { position: relative; overflow: hidden; --mouse-x: 50%; --mouse-y: 50%; pointer-events: auto; }
+.glassy-hover::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at var(--mouse-x) var(--mouse-y), rgba(255,255,255,0.32), transparent 50%); backdrop-filter: blur(10px); opacity: 0; transition: opacity 320ms ease; pointer-events: none; }
+.glassy-hover:hover::before { opacity: 1; }
+.glassy-hover:hover { transform: scale(1.02) skewX(-0.3deg); filter: url(#liquid-distortion); animation: morph 3.8s ease-in-out infinite; }
+
+@keyframes morph {
+  0%, 100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+  25% { border-radius: 40% 60% 70% 30% / 40% 70% 30% 60%; }
+  50% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+  75% { border-radius: 60% 30% 40% 70% / 70% 40% 60% 30%; }
+}
+
+.trail-blob, .main-blob, .bubble { contain: paint; }
+
+@media (max-width: 900px) {
+  .liquid-cursor-root { display:none; }
+  body { cursor: auto !important; }
+}
+
+
+
+
+/* 
+
+.main-blob {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 80px;
+  height: 80px;
+  background: radial-gradient(circle at center, rgba(0, 0, 0, 0.7) 10%, rgba(0, 0, 0, 0) 50%);
+  transform: translate3d(-9999px,-9999px,0);
+  will-change: transform, opacity;
+  z-index: 10000;
+  pointer-events: none;
+  box-shadow: 0 8px 35px rgba(0, 0, 0, 0.35);
+  border-radius: 50%;
+  transition: opacity 0.45s ease, transform 0.28s cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+
+.main-blob.is-interactive {
+  animation: main-blob-morph 4.8s ease-in-out infinite;
+  transition: transform 0.12s cubic-bezier(.2,.9,.2,1);
+  background: radial-gradient(circle at center, rgba(0, 0, 0, 0.7) 10%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.2) 90%);
+}
+
+.main-blob.is-interactive::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.25), inset 0 8px 24px rgba(255, 255, 255, 0.02);
+  pointer-events: none;
+  transform-origin: 50% 50%;
+  animation: interactive-wobble 900ms ease-in-out infinite;
+}
+
+@keyframes main-blob-morph {
+  0%, 100% { border-radius: 50%; }
+  20% { border-radius: 60%; }
+  40% { border-radius: 45%; }
+  60% { border-radius: 50%; }
+  80% { border-radius: 55%; }
+}
+
+@keyframes interactive-wobble {
+  0% { transform: scale(1) rotate(0deg); }
+  30% { transform: scale(1.04) rotate(-0.6deg); }
+  60% { transform: scale(1.02) rotate(0.4deg); }
+  100% { transform: scale(1) rotate(0deg); }
+} */
