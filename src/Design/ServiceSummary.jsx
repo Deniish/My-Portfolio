@@ -55,9 +55,10 @@ const ServiceSummary = () => {
       serviceContainers.forEach((container) => {
         container.classList.remove('tilt-left', 'tilt-right');
         
-        if (gamma > 5) {
+        // Increased sensitivity - triggers at smaller angles
+        if (gamma > 3) {
           container.classList.add('tilt-right');
-        } else if (gamma < -5) {
+        } else if (gamma < -3) {
           container.classList.add('tilt-left');
         }
       });
@@ -86,17 +87,15 @@ const ServiceSummary = () => {
       <style>
         {`
           @media (max-width: 900px) {
-            /* Remove all padding and make full width */
+            /* Remove all padding and center content */
             .mobile-services-section {
               padding: 0 !important;
-              margin-left: 0 !important;
-              margin-right: 0 !important;
-              width: 100vw !important;
-              position: relative;
-              left: 50%;
-              right: 50%;
-              margin-left: -50vw !important;
-              margin-right: -50vw !important;
+              margin: 0 auto !important;
+              width: 100% !important;
+              max-width: 100vw !important;
+              overflow-x: hidden !important;
+              transform: translateY(0) !important; /* Remove upward shift */
+              margin-top: 40px !important; /* Add proper top spacing */
             }
             
             .service-row {
@@ -105,11 +104,13 @@ const ServiceSummary = () => {
               transform: translateX(0) !important;
               width: 100% !important;
               padding: 0 !important;
+              margin: 0 !important; /* Remove gaps between services */
             }
             .service-row div {
               width: 100% !important;
               justify-content: center;
               padding: 0 !important;
+              margin: 0 !important; /* Remove gaps */
             }
             .stop-scroll-anim {
               transform: translateX(0) !important;
@@ -120,37 +121,43 @@ const ServiceSummary = () => {
               display: none !important;
             }
             
-            /* Show mobile separators */
+            /* Show mobile separators - FIXED position */
             .mobile-separator {
               display: block !important;
               width: 100%;
               height: 4px;
               background-color: #ff6b35;
               margin: 10px auto;
+              transform: none !important; /* Don't move with tilt */
             }
             
-            /* Full width service containers */
+            /* Full width service containers - NO GAPS */
             .service-container {
               width: 100% !important;
-              margin: 0 !important;
-              padding: 15px 0 !important;
-              transition: transform 0.1s ease-out;
+              margin: 0 auto !important;
+              padding: 10px 0 !important; /* Reduced padding */
+              display: flex;
+              flex-direction: column;
+              align-items: center;
             }
             
-            /* Variable proximity demo full width */
+            /* Variable proximity demo - this moves with tilt */
             .variable-proximity-demo {
               width: 100% !important;
               display: block !important;
               padding: 0 20px !important;
+              transition: transform 0.3s ease-out;
+              will-change: transform;
+              margin: 0 !important; /* No margins */
             }
             
-            /* Device tilt effect - only on mobile */
-            .service-container.tilt-left {
-              transform: translateX(-15px) rotate(-2deg) !important;
+            /* Device tilt effect - only labels move */
+            .service-container.tilt-left .variable-proximity-demo {
+              transform: translateX(-60%) !important;
             }
             
-            .service-container.tilt-right {
-              transform: translateX(15px) rotate(2deg) !important;
+            .service-container.tilt-right .variable-proximity-demo {
+              transform: translateX(60%) !important;
             }
           }
           
