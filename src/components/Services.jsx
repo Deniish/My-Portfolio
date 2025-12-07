@@ -34,7 +34,7 @@ const Services = () => {
     <section
       ref={containerRef}
       id="services"
-      className="min-h-screen bg-black rounded-t-4xl"
+      className="min-h-screen bg-black"
     >
       <AnimatedHeaderSection
         subTitle={"Behind the scene, Beyond the screen"}

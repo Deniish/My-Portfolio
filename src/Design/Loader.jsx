@@ -51,13 +51,43 @@
 
 
 
-export default function LightLoader() {
+import { useEffect, useState } from "react";
+
+export default function LightLoader({ onFinished }) {
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    let current = 0;
+
+    const interval = setInterval(() => {
+      current += Math.random() * 12; // smooth progress effect
+
+      if (current >= 100) {
+        current = 100;
+        clearInterval(interval);
+        setTimeout(onFinished, 400); // fade transition end
+      }
+
+      setProgress(Math.floor(current));
+    }, 120);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
-    <div role="status" aria-label="Loading" className="inline-flex items-center gap-2">
-      <span className=" text-white">Loading</span>
-      <div className="h-2 w-2 rounded-full bg-white animate-bounce [animation-delay:-0.2s]" />
-      <div className="h-2 w-2 rounded-full bg-white animate-bounce [animation-delay:-0.1s]" />
-      <div className="h-2 w-2 rounded-full bg-white animate-bounce" />
+    <div className="fixed inset-0 z-[999] flex flex-col items-center justify-center bg-black text-white transition-opacity duration-700 font-light">
+      
+      <p className="mb-4 text-xl tracking-widest animate-pulse">
+        Loading {progress}%
+      </p>
+
+      <div className="relative h-1 overflow-hidden rounded w-60 bg-white/20">
+        <div
+          className="absolute top-0 left-0 h-full transition-all duration-300 bg-white"
+          style={{ width: `${progress}%` }}
+        ></div>
+      </div>
+
     </div>
   );
 }

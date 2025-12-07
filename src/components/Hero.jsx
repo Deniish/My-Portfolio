@@ -14,7 +14,7 @@ export default function Hero() {
     const preload = () =>
       Promise.all([
         import("../Design/Particles"),
-        import("../Design/RippleBackground"),
+        import("../Design/BlobCursor"),
       ]);
 
     if ("requestIdleCallback" in window) {

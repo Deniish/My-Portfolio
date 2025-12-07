@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import "../Styles/RippleBackground.css";
+import "../Styles/BlobCursor.css";
 
-export default function RippleBackground({ children }) {
+export default function BlobCursor({ children }) {
   const disabledOnTouch = useRef(false);
   const mouse = useRef({ x: -9999, y: -9999, down: false });
   const blobs = useRef([]);
@@ -32,6 +32,26 @@ export default function RippleBackground({ children }) {
   const rightEyeRef = useRef(null);
   const eyeContainerRef = useRef(null);
 
+  // Handle toggle from AccessibilityButton
+  useEffect(() => {
+    const handleToggle = (e) => {
+      setEnabled(e.detail.enabled);
+      
+      // When disabled, immediately hide cursor by moving it off-screen
+      if (!e.detail.enabled) {
+        mouse.current.x = -9999;
+        mouse.current.y = -9999;
+        
+        // Clear all blobs and particles
+        blobs.current = [];
+        particles.current = [];
+      }
+    };
+    
+    window.addEventListener('blobCursorToggle', handleToggle);
+    return () => window.removeEventListener('blobCursorToggle', handleToggle);
+  }, []);
+  
   // disable on touch devices
   useEffect(() => {
     const hasTouch = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
@@ -219,11 +239,11 @@ export default function RippleBackground({ children }) {
         mb.dataset.ty = mouse.current.y;
       }
 
-      // update trail DOM - hide during scroll
+      // update trail DOM - hide during scroll or when disabled
       const trailC = trailContainerRef.current;
       if (trailC) {
-        trailC.style.opacity = isScrolling ? '0' : '1';
-        trailC.style.pointerEvents = isScrolling ? 'none' : 'auto';
+        trailC.style.opacity = (isScrolling || !enabled) ? '0' : '1';
+        trailC.style.pointerEvents = (isScrolling || !enabled) ? 'none' : 'auto';
 
         const nodes = Array.from(trailC.children);
         while (nodes.length < blobs.current.length) {
@@ -254,8 +274,8 @@ export default function RippleBackground({ children }) {
 
           node.style.transform = `translate3d(${nx - offset}px, ${ny - offset}px, 0) scale(${1 - i * 0.015})`;
           
-          // Hide trail when over interactive element
-          const trailOpacity = mouse.current.isOverInteractive ? 0 : Math.max(0, isIdle ? 0 : 1 - i * 0.04);
+          // Hide trail when over interactive element or disabled
+          const trailOpacity = (mouse.current.isOverInteractive || !enabled) ? 0 : Math.max(0, isIdle ? 0 : 1 - i * 0.04);
           node.style.opacity = `${trailOpacity}`;
           
           node.dataset.cx = nx;
@@ -272,7 +292,8 @@ export default function RippleBackground({ children }) {
         const ny = ease(cy, mouse.current.y, speed);
 
         const scaleBase = mouse.current.down ? 1.15 : 1.0;
-        const opacity = isIdle || isScrolling ? 0 : 1;
+        // Updated to include !enabled check
+        const opacity = (isIdle || isScrolling || !enabled) ? 0 : 1;
 
         // Check if over interactive element
         const isOverInteractive = mouse.current.isOverInteractive;
@@ -292,11 +313,11 @@ export default function RippleBackground({ children }) {
         }
       }
 
-      // update particles - hide during scroll
+      // update particles - hide during scroll or when disabled
       const bubC = bubbleContainerRef.current;
       if (bubC) {
-        bubC.style.opacity = isScrolling ? '0' : '1';
-        bubC.style.pointerEvents = isScrolling ? 'none' : 'auto';
+        bubC.style.opacity = (isScrolling || !enabled) ? '0' : '1';
+        bubC.style.pointerEvents = (isScrolling || !enabled) ? 'none' : 'auto';
 
         const doms = Array.from(bubC.children);
         while (doms.length < particles.current.length) {
@@ -320,7 +341,8 @@ export default function RippleBackground({ children }) {
           if (!node) continue;
           node.style.transform = `translate3d(${p.x - p.r}px, ${p.y - p.r}px, 0) scale(${Math.max(0.2, p.life)})`;
           node.style.width = node.style.height = `${p.r * 2}px`;
-          node.style.opacity = `${Math.max(0, isIdle || isScrolling ? 0 : p.life)}`;
+          // Updated to include !enabled check
+          node.style.opacity = `${Math.max(0, (isIdle || isScrolling || !enabled) ? 0 : p.life)}`;
           if (p.life <= 0) {
             particles.current.splice(i, 1);
             node.remove();
@@ -334,12 +356,14 @@ export default function RippleBackground({ children }) {
         rightEyeRef.current.style.transform = `translate(${isBlinking ? 0 : eyePos.right?.x || 0}px, ${isBlinking ? 0 : eyePos.right?.y || 0}px)`;
       }
 
-      // Update eye container position
+      // Update eye container position - hide when disabled
       if (eyeContainerRef.current && mb) {
         const blobX = parseFloat(mb.dataset.cx || mouse.current.x);
         const blobY = parseFloat(mb.dataset.cy || mouse.current.y);
         eyeContainerRef.current.style.left = `${blobX - 40}px`;
         eyeContainerRef.current.style.top = `${blobY - 40}px`;
+        // Updated to include !enabled check
+        eyeContainerRef.current.style.opacity = (isIdle || isScrolling || !enabled) ? '0' : '1';
       }
 
       rafRef.current = requestAnimationFrame(loop);
@@ -349,7 +373,7 @@ export default function RippleBackground({ children }) {
     return () => {
       cancelAnimationFrame(rafRef.current);
     };
-  }, [isIdle, isScrolling, eyePos, isBlinking]);
+  }, [isIdle, isScrolling, eyePos, isBlinking, enabled]);
 
   // cleanup
   useEffect(() => {
@@ -385,7 +409,8 @@ export default function RippleBackground({ children }) {
         ref={eyeContainerRef}
         className="eye-container"
         style={{
-          opacity: isIdle || isScrolling ? '0' : '1',
+          opacity: (isIdle || isScrolling || !enabled) ? '0' : '1',
+          transition: 'opacity 0.2s ease',
         }}
       >
         {/* Left Eye */}

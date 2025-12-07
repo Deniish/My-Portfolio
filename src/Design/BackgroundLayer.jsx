@@ -2,7 +2,7 @@
 import React, { Suspense } from "react";
 
 const Particles = React.lazy(() => import("../Design/Particles"));
-const RippleBackground = React.lazy(() => import("../Design/RippleBackground"));
+const BlobCursor = React.lazy(() => import("../Design/BlobCursor"));
 
 export default function BackgroundLayer({ visible = true }) {
   if (!visible) return null;
@@ -21,7 +21,7 @@ export default function BackgroundLayer({ visible = true }) {
           disableRotation={false}
         />
       </div>
-      <RippleBackground />
+      <BlobCursor  />
       <div className="absolute inset-0 pointer-events-none grain-overlay z-5" />
     </Suspense>
   );
