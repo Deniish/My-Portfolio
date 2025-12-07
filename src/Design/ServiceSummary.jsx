@@ -17,60 +17,98 @@ const ServiceSummary = () => {
   };
 
   useEffect(() => {
-    // 💡 Disable scroll animations on screens <= 900px
-    if (window.innerWidth <= 900) return;
+    // Desktop scroll animations (> 900px)
+    if (window.innerWidth > 900) {
+      const animations = [
+        { id: "#title-service-1", x: 10 },
+        { id: "#title-service-2", x: -10 },
+        { id: "#title-service-3", x: 20 },
+        { id: "#title-service-4", x: -20 },
+      ];
 
-    const animations = [
-      { id: "#title-service-1", x: 10 },
-      { id: "#title-service-2", x: -10 },
-      { id: "#title-service-3", x: 20 },
-      { id: "#title-service-4", x: -20 },
-    ];
-
-    animations.forEach(({ id, x }) => {
-      gsap.to(id, {
-        xPercent: x,
-        scrollTrigger: {
-          trigger: id,
-          scrub: 0.7,
-          ease: "power1.out",
-        },
+      animations.forEach(({ id, x }) => {
+        gsap.to(id, {
+          xPercent: x,
+          scrollTrigger: {
+            trigger: id,
+            scrub: 0.7,
+            ease: "power1.out",
+          },
+        });
       });
-    });
+    }
 
-    return () => {
-      ScrollTrigger.getAll().forEach((t) => t.kill());
-    };
-  }, []);
-
-  // Device tilt effect - ONLY for mobile devices (≤900px)
-  useEffect(() => {
-    if (window.innerWidth > 900) return; // Don't run on desktop
-
-    const handleOrientation = (event) => {
-      const gamma = event.gamma; // Left-right tilt (-90 to 90)
-      
-      const serviceContainers = document.querySelectorAll('.service-container');
-      
-      serviceContainers.forEach((container) => {
-        container.classList.remove('tilt-left', 'tilt-right');
-        
-        // Increased sensitivity - triggers at smaller angles
-        if (gamma > 3) {
-          container.classList.add('tilt-right');
-        } else if (gamma < -3) {
-          container.classList.add('tilt-left');
+    // Mobile animations (≤ 900px)
+    if (window.innerWidth <= 900) {
+      // Service 1 - Slide in from left
+      gsap.fromTo("#title-service-1 .variable-proximity-demo", 
+        { x: -100, opacity: 0 },
+        { 
+          x: 0, 
+          opacity: 1,
+          duration: 0.8,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: "#title-service-1",
+            start: "top 80%",
+            toggleActions: "play none none reverse"
+          }
         }
-      });
-    };
+      );
 
-    // Check if device supports orientation
-    if (window.DeviceOrientationEvent) {
-      window.addEventListener('deviceorientation', handleOrientation);
+      // Service 2 - Slide in from right
+      gsap.fromTo("#title-service-2 .variable-proximity-demo", 
+        { x: 100, opacity: 0 },
+        { 
+          x: 0, 
+          opacity: 1,
+          duration: 0.8,
+          ease: "power2.out",
+          stagger: 0.2,
+          scrollTrigger: {
+            trigger: "#title-service-2",
+            start: "top 80%",
+            toggleActions: "play none none reverse"
+          }
+        }
+      );
+
+      // Service 3 - Slide in from left with fade
+      gsap.fromTo("#title-service-3 .variable-proximity-demo", 
+        { x: -100, opacity: 0 },
+        { 
+          x: 0, 
+          opacity: 1,
+          duration: 0.8,
+          ease: "power2.out",
+          stagger: 0.2,
+          scrollTrigger: {
+            trigger: "#title-service-3",
+            start: "top 80%",
+            toggleActions: "play none none reverse"
+          }
+        }
+      );
+
+      // Service 4 - Slide in from right
+      gsap.fromTo("#title-service-4 .variable-proximity-demo", 
+        { x: 100, opacity: 0 },
+        { 
+          x: 0, 
+          opacity: 1,
+          duration: 0.8,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: "#title-service-4",
+            start: "top 80%",
+            toggleActions: "play none none reverse"
+          }
+        }
+      );
     }
 
     return () => {
-      window.removeEventListener('deviceorientation', handleOrientation);
+      ScrollTrigger.getAll().forEach((t) => t.kill());
     };
   }, []);
 
@@ -94,8 +132,8 @@ const ServiceSummary = () => {
               width: 100% !important;
               max-width: 100vw !important;
               overflow-x: hidden !important;
-              transform: translateY(0) !important; /* Remove upward shift */
-              margin-top: 40px !important; /* Add proper top spacing */
+              transform: translateY(0) !important;
+              margin-top: 40px !important;
             }
             
             .service-row {
@@ -104,13 +142,13 @@ const ServiceSummary = () => {
               transform: translateX(0) !important;
               width: 100% !important;
               padding: 0 !important;
-              margin: 0 !important; /* Remove gaps between services */
+              margin: 0 !important;
             }
             .service-row div {
               width: 100% !important;
               justify-content: center;
               padding: 0 !important;
-              margin: 0 !important; /* Remove gaps */
+              margin: 0 !important;
             }
             .stop-scroll-anim {
               transform: translateX(0) !important;
@@ -128,36 +166,25 @@ const ServiceSummary = () => {
               height: 4px;
               background-color: #ff6b35;
               margin: 10px auto;
-              transform: none !important; /* Don't move with tilt */
+              transform: none !important;
             }
             
             /* Full width service containers - NO GAPS */
             .service-container {
               width: 100% !important;
               margin: 0 auto !important;
-              padding: 10px 0 !important; /* Reduced padding */
+              padding: 10px 0 !important;
               display: flex;
               flex-direction: column;
               align-items: center;
             }
             
-            /* Variable proximity demo - this moves with tilt */
+            /* Variable proximity demo */
             .variable-proximity-demo {
               width: 100% !important;
               display: block !important;
               padding: 0 20px !important;
-              transition: transform 0.3s ease-out;
-              will-change: transform;
-              margin: 0 !important; /* No margins */
-            }
-            
-            /* Device tilt effect - only labels move */
-            .service-container.tilt-left .variable-proximity-demo {
-              transform: translateX(-60%) !important;
-            }
-            
-            .service-container.tilt-right .variable-proximity-demo {
-              transform: translateX(60%) !important;
+              margin: 0 !important;
             }
           }
           
