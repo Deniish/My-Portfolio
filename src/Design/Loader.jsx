@@ -13,7 +13,7 @@
 //       const blob = await response.blob();
 //       console.log("Blob:", blob);
 
-      
+
 //       const parsed = await parseLogoImage(blob);
 //       console.log("Parsed:", parsed);
 
@@ -55,6 +55,7 @@ import { useEffect, useState } from "react";
 
 export default function LightLoader({ onFinished }) {
   const [progress, setProgress] = useState(0);
+  const [isFadingOut, setIsFadingOut] = useState(false);
 
   useEffect(() => {
     let current = 0;
@@ -65,7 +66,12 @@ export default function LightLoader({ onFinished }) {
       if (current >= 100) {
         current = 100;
         clearInterval(interval);
-        setTimeout(onFinished, 400); // fade transition end
+
+        // Start fading out
+        setIsFadingOut(true);
+
+        // Wait for fade out transition (700ms) before unmounting
+        setTimeout(onFinished, 700);
       }
 
       setProgress(Math.floor(current));
@@ -75,8 +81,11 @@ export default function LightLoader({ onFinished }) {
   }, []);
 
   return (
-    <div className="fixed inset-0 z-[999] flex flex-col items-center justify-center bg-black text-white transition-opacity duration-700 font-light">
-      
+    <div
+      className={`fixed inset-0 z-[999] flex flex-col items-center justify-center bg-black text-white transition-opacity duration-700 font-light ${isFadingOut ? 'opacity-0 pointer-events-none' : 'opacity-100'
+        }`}
+    >
+
       <p className="mb-4 text-xl tracking-widest animate-pulse">
         Loading {progress}%
       </p>

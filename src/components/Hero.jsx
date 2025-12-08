@@ -5,7 +5,7 @@ import "../Styles/Hero.css";
 import ServiceSummary from "../Design/ServiceSummary";
 import BackgroundLayer from "../Design/BackgroundLayer";
 
-export default function Hero() {
+export default function Hero({ ready }) {
   const cardNavRef = useRef(null);
   const [bgVisible, setBgVisible] = useState(false);
 
@@ -63,18 +63,18 @@ export default function Hero() {
         {/* Signature centered */}
         {bgVisible && (
           <div className="relative z-10 flex flex-col items-center justify-center w-full max-w-xs p-0 m-0 signature-wrapper sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl">
-            <DenishSignature cardNavRef={cardNavRef}  />
+            <DenishSignature cardNavRef={cardNavRef} isReady={ready} />
           </div>
 
 
         )}
       </section>
 
-      {/* ServiceSummary Section */} 
+      {/* ServiceSummary Section */}
       <section className="relative flex flex-col items-center justify-center p-0 px-4 py-24 m-0 overflow-hidden text-white service-summary-section md:py-32">
- 
-        <BackgroundLayer visible={bgVisible} /> 
-        <ServiceSummary /> 
+
+        <BackgroundLayer visible={bgVisible} />
+        <ServiceSummary />
       </section>
     </>
   );

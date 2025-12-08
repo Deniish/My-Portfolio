@@ -2,16 +2,13 @@ import React, { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import LightLoader from "./Loader";
 
-const DenishSignature = ({ cardNavRef, onComplete, onIntroStart }) => { // ★ added onIntroStart
+const DenishSignature = ({ cardNavRef, onComplete, onIntroStart, isReady }) => { // ★ updated props
   const wrapRef = useRef(null);
   const targetRef = useRef(null);
 
   // PATH refs
   const pathsRef = useRef([]);
   const scrollTextPathsRef = useRef([]);
-
-  // loader state
-  const [isReady, setIsReady] = useState(false);
 
   // Refs replacing querySelector
   const underlineRef = useRef(null);
@@ -94,11 +91,7 @@ const DenishSignature = ({ cardNavRef, onComplete, onIntroStart }) => { // ★ a
       });
     }, wrapRef);
 
-    // Fake loader (2s)
-    const timer = setTimeout(() => setIsReady(true), 10);
-
     return () => {
-      clearTimeout(timer);
       ctx.revert();
     };
   }, []);
@@ -114,24 +107,24 @@ const DenishSignature = ({ cardNavRef, onComplete, onIntroStart }) => { // ★ a
       const tl = gsap.timeline();
 
       // NAME LETTERS
-        namePaths.forEach((path, i) => {
-          tl.to(
-            path,
-            {
-              strokeDashoffset: 0,
-              duration: 0.9,        // increased from 0.6 → 0.9 for slower stroke
-              opacity: 1,
-              visibility: "visible",
-              ease: "power2.inOut", // smoother easing
-            },
-            i * 0.25                // slightly smaller stagger for smoother flow
-          );
-          tl.to(
-            path,
-            { fill: "white", duration: 0.8, ease: "power2.inOut" }, // slower fill fade
-            i * 0.25 + 0.5
-          );
-        });
+      namePaths.forEach((path, i) => {
+        tl.to(
+          path,
+          {
+            strokeDashoffset: 0,
+            duration: 0.9,        // increased from 0.6 → 0.9 for slower stroke
+            opacity: 1,
+            visibility: "visible",
+            ease: "power2.inOut", // smoother easing
+          },
+          i * 0.25                // slightly smaller stagger for smoother flow
+        );
+        tl.to(
+          path,
+          { fill: "white", duration: 0.8, ease: "power2.inOut" }, // slower fill fade
+          i * 0.25 + 0.5
+        );
+      });
 
 
       // UNDERLINE
@@ -148,72 +141,72 @@ const DenishSignature = ({ cardNavRef, onComplete, onIntroStart }) => { // ★ a
         );
       }
 
-       // animate tagline
-        tl.add("taglineStart", ">");
-        tl.call(() => onIntroStart?.(), null, "taglineStart");
+      // animate tagline
+      tl.add("taglineStart", ">");
+      tl.call(() => onIntroStart?.(), null, "taglineStart");
 
+      tl.to(
+        taglinePaths,
+        {
+          strokeDashoffset: 0,
+          duration: 0.75,          // ↓ from 1.0
+          ease: "power2.out",
+          opacity: 1,
+          visibility: "visible",
+          stagger: 0.18,           // ↓ from 0.25
+        },
+        "taglineStart+=0.1"        // ↓ again for snappier start
+      );
+
+      tl.to(
+        taglinePaths,
+        {
+          fill: "white",
+          duration: 0.5,           // ↓ from 0.7
+          ease: "power2.out",
+          stagger: 0.18,
+        },
+        "<"
+      );
+
+      // SHOW TEXTBOX
+      tl.add("taglineDone");
+      if (textBoxRef.current) {
+        tl.set(textBoxRef.current, { autoAlpha: 0, y: 12 }); // ↓ smaller travel
         tl.to(
-          taglinePaths,
+          textBoxRef.current,
           {
-            strokeDashoffset: 0,
-            duration: 0.75,          // ↓ from 1.0
-            ease: "power2.out",
-            opacity: 1,
-            visibility: "visible",
-            stagger: 0.18,           // ↓ from 0.25
+            autoAlpha: 1,
+            y: 0,
+            duration: 0.45,        // ↓ from 0.6
+            ease: "power1.out",
           },
-          "taglineStart+=0.1"        // ↓ again for snappier start
+          "taglineDone"
         );
-
-        tl.to(
-          taglinePaths,
-          {
-            fill: "white",
-            duration: 0.5,           // ↓ from 0.7
-            ease: "power2.out",
-            stagger: 0.18,
-          },
-          "<"
-        );
-
-        // SHOW TEXTBOX
-        tl.add("taglineDone");
-        if (textBoxRef.current) {
-          tl.set(textBoxRef.current, { autoAlpha: 0, y: 12 }); // ↓ smaller travel
-          tl.to(
-            textBoxRef.current,
-            {
-              autoAlpha: 1,
-              y: 0,
-              duration: 0.45,        // ↓ from 0.6
-              ease: "power1.out",
-            },
-            "taglineDone"
-          );
-        }
+      }
 
       // CARDNAV
-        if (cardNavRef?.current) {
-          tl.set(cardNavRef.current, {
-            y: -60,
-            opacity: 0,
-            filter: "blur(6px)",  
-            clearProps: "all",         // <--- IMPORTANT FIX
-          });
+      if (cardNavRef?.current) {
+        tl.set(cardNavRef.current, {
+          y: -60,
+          opacity: 0,
+          filter: "blur(6px)",
+          clearProps: "all",         // <--- IMPORTANT FIX
+        });
 
-          tl.to(
-            cardNavRef.current,
-            {
-              y: 0,
-              opacity: 1,
-              filter: "blur(0px)",
-              duration: 1.4,
-              ease: "power4.out",
-              clearProps: "transform,opacity,visibility",     // keep transform & opacity intact
-            },
-            "taglineDone-=5.5"
-          );
-        }
+        tl.to(
+          cardNavRef.current,
+          {
+            y: 0,
+            opacity: 1,
+            filter: "blur(0px)",
+            duration: 1.4,
+            ease: "power4.out",
+            clearProps: "transform,opacity,visibility",     // keep transform & opacity intact
+          },
+          "taglineDone-=5.5"
+        );
+      }
 
 
       // ✅ optional callback prop
@@ -343,10 +336,10 @@ const DenishSignature = ({ cardNavRef, onComplete, onIntroStart }) => { // ★ a
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 450 57.75"
             style={{
-          visibility: isReady ? "visible" : "hidden",
-          opacity: isReady ? 1 : 0,
-          transition: "opacity 0.3s ease",
-        }}
+              visibility: isReady ? "visible" : "hidden",
+              opacity: isReady ? 1 : 0,
+              transition: "opacity 0.3s ease",
+            }}
           >
             <path ref={(el) => (scrollTextPathsRef.current[0] = el)} d="M2.20 40.45Q1.15 40.45 0.58 40.27Q0 40.10 0 39.45Q0 39.20 0.05 38.92Q0.10 38.65 0.25 38.30Q0.50 37.75 1.10 37.48Q1.70 37.20 2.20 37.20Q2.70 37.20 3.10 37.45Q3.80 37.95 4.75 38.33Q5.70 38.70 6.75 38.70Q7.95 38.70 9.20 38.13Q10.45 37.55 11.55 36Q13.05 34.05 14.35 31.13Q15.65 28.20 16.73 24.95Q17.80 21.70 18.65 18.63Q19.50 15.55 20.05 13.30Q17.45 13.50 15 14.17Q12.55 14.85 10.97 16.07Q9.40 17.30 9.40 19.10Q9.40 20.10 9.95 20.72Q10.50 21.35 11.22 21.70Q11.95 22.05 12.40 22.30Q12.75 22.50 12.75 22.65Q12.75 22.95 12.30 22.75Q11.70 22.60 10.78 22.07Q9.85 21.55 9.13 20.65Q8.40 19.75 8.35 18.60Q8.35 18.50 8.28 18.30Q8.20 18.10 8.20 17.95Q8.10 16.05 9.18 14.75Q10.25 13.45 12.08 12.63Q13.90 11.80 16.13 11.42Q18.35 11.05 20.60 11.05L20.80 10.55Q20.90 10.30 21.38 10.13Q21.85 9.95 22.35 9.95Q22.85 9.95 23.18 10.10Q23.50 10.25 23.50 10.50Q23.50 10.75 23.25 11.15Q24.90 11.30 26.28 11.65Q27.65 12 28.60 12.50Q28.95 12.65 29.43 13.13Q29.90 13.60 29.90 13.90Q29.90 14.15 29.50 14.15Q29.30 14.15 29.00 14.10Q28.70 14.05 28.30 13.90Q27.35 13.55 25.83 13.40Q24.30 13.25 22.55 13.25Q21.80 15.55 20.78 18.70Q19.75 21.85 18.48 25.23Q17.20 28.60 15.70 31.67Q14.20 34.75 12.55 36.85Q12.05 37.35 11.58 37.85Q11.10 38.35 10.65 38.75Q13.40 38.80 15.67 38.70Q17.95 38.60 19.50 38.55L19.80 38.55Q20.35 38.55 20.35 38.80Q20.35 39.05 20.05 39.35Q19.75 39.65 19.55 39.75Q19.30 39.85 17.83 39.98Q16.35 40.10 14.18 40.17Q12 40.25 9.65 40.33Q7.30 40.40 5.30 40.42Q3.30 40.45 2.20 40.45Z" />
             <path ref={(el) => (scrollTextPathsRef.current[1] = el)} d="M0.40 24.85Q0.25 24.85 0.13 24.65Q0 24.45 0.05 24.10Q0.15 23.55 0.18 22.70Q0.20 21.85 0.20 21.05L0.20 19.30Q0.25 18.85 0.20 18.42Q0.15 18 0.15 17.65Q0.15 17.10 0.45 16.75Q0.75 16.40 1.75 16.40Q2.35 16.40 2.55 16.70Q2.75 17 2.75 17.45Q2.75 17.95 2.58 18.57Q2.40 19.20 2.30 19.60Q2.05 20.55 1.65 21.68Q1.25 22.80 0.90 24.30Q0.75 24.85 0.40 24.85Z" />
@@ -361,7 +354,7 @@ const DenishSignature = ({ cardNavRef, onComplete, onIntroStart }) => { // ★ a
             <path ref={(el) => (scrollTextPathsRef.current[10] = el)} d="M0.90 31.50Q0 31.50 0 31Q0 30.60 0.58 30.15Q1.15 29.70 1.65 29.70Q2.20 29.70 3.55 29.67Q4.90 29.65 6.45 29.63Q8 29.60 9.00 29.60Q10.25 29.60 11.03 29.82Q11.80 30.05 11.80 30.30Q11.80 30.60 11.20 30.75Q10.60 30.90 9.95 30.98Q9.30 31.05 9.05 31.10Q7.85 31.15 6.22 31.25Q4.60 31.35 3.13 31.42Q1.65 31.50 0.90 31.50Z" />
             <path ref={(el) => (scrollTextPathsRef.current[11] = el)} d="M3.90 40.50Q3 40.50 2.28 40.10Q1.55 39.70 1.20 38.60Q1.15 38.45 1.13 38.30Q1.10 38.15 1.10 37.95Q1.10 36.95 1.55 35.45Q2 33.95 2.65 32.55Q2.35 32.95 1.95 33.52Q1.55 34.10 0.80 35Q0.60 35.20 0.35 35.20Q0 35.20 0 34.80Q0 34.50 0.20 34.30Q1.50 32.65 2.53 31.35Q3.55 30.05 4.05 29.15Q4.05 29.05 4.35 28.52Q4.65 28 5.15 27.05Q4.75 27.10 4.48 27.13Q4.20 27.15 4 27.15Q3.65 27.15 3.40 26.85Q3.15 26.55 3.35 26.10Q3.60 25.40 4.45 25.30Q5.30 25.20 5.95 25.15Q6.00 25.05 6.15 25.05Q6.75 23.95 7.30 22.90Q7.85 21.85 8.22 21.15Q8.60 20.45 8.60 20.40Q9.60 18.80 9.90 18.27Q10.20 17.75 10.70 17.65Q11.25 17.60 11.88 17.70Q12.50 17.80 12.70 18.15Q12.85 18.35 12.85 18.65Q12.85 19.10 12.65 19.52Q12.45 19.95 12.25 20.20Q12.05 20.55 11.72 20.67Q11.40 20.80 11.15 21.30Q10.65 22.25 10.05 23.35Q9.45 24.45 8.80 25.45L9.40 25.40Q10.60 25.30 11.68 25.15Q12.75 25 14.15 25.05Q14.40 25.05 14.68 25.13Q14.95 25.20 14.95 25.35Q14.95 25.55 13.65 25.90Q13.15 26.10 11.47 26.32Q9.80 26.55 8.05 26.75Q7.55 27.70 7.15 28.32Q6.75 28.95 6.60 29.25Q5.50 31.55 4.63 33.42Q3.75 35.30 3.65 36.50Q3.60 36.70 3.60 36.88Q3.60 37.05 3.60 37.25Q3.60 39.25 4.90 39.25Q5.70 39.25 6.95 38.38Q8.20 37.50 9.50 36.23Q10.80 34.95 11.88 33.77Q12.95 32.60 13.35 32Q13.50 31.85 13.65 31.85Q13.85 31.85 13.97 32Q14.10 32.15 14 32.40Q13.55 33.25 12.47 34.52Q11.40 35.80 10.07 37.08Q8.75 38.35 7.50 39.25Q6.85 39.75 5.88 40.13Q4.90 40.50 3.90 40.50Z" />
             <path ref={(el) => (scrollTextPathsRef.current[12] = el)} d="M4.20 40.55Q2.80 40.55 1.75 39.90Q0 38.85 0 36.10Q0 34.95 0.40 33.45Q0.75 32.20 1.65 30.73Q2.55 29.25 3.78 27.90Q5 26.55 6.45 25.70Q7.90 24.85 9.35 24.85Q9.95 24.85 10.40 25Q11 25.20 11.43 25.73Q11.85 26.25 11.85 27.05Q11.85 27.90 11.43 28Q11 28.10 11 27.80Q11 27.70 11.03 27.60Q11.05 27.50 11.05 27.45Q11.05 27.05 10.82 26.73Q10.60 26.40 10 26.40Q9.20 26.40 8.03 27.25Q6.85 28.10 5.63 29.52Q4.40 30.95 3.48 32.65Q2.55 34.35 2.25 36.05Q2.20 36.30 2.17 36.52Q2.15 36.75 2.15 37Q2.15 38.15 2.67 38.92Q3.20 39.70 4.35 39.70Q5.75 39.70 7.05 38.63Q8.35 37.55 9.38 36.05Q10.40 34.55 10.90 33.40Q11.30 32.50 11.45 31.85Q11.60 31.20 11.60 30.75Q11.60 30.35 11.53 30.05Q11.45 29.75 11.35 29.55Q11.25 29.25 11.25 29.10Q11.25 28.70 11.57 28.45Q11.90 28.20 12.25 28.20Q12.55 28.20 12.90 28.40Q13.30 28.50 14 28.55Q14.70 28.60 15.50 28.60Q16.35 28.60 17.23 28.55Q18.10 28.50 18.75 28.35Q18.85 28.30 19.05 28.30Q19.40 28.30 19.40 28.50Q19.40 28.70 19.05 28.85Q17.30 29.65 15.93 29.70Q14.55 29.75 13.55 29.75Q13.65 31 13 32.42Q12.35 33.85 11.65 34.95Q10.80 36.20 9.70 37.50Q8.60 38.80 7.25 39.67Q5.90 40.55 4.20 40.55Z" />
-            
+
           </svg>
           <div className="textBox" ref={textBoxRef}>
             <ul>
