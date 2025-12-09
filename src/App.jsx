@@ -11,7 +11,8 @@ import { ScrollTrigger } from "gsap/all";
 
 import Navbar from "./components/Navbar";
 import Services from "./components/Services";
-import AboutMe from "./components/AboutMe"; 
+import AboutMe from "./components/AboutMe";
+
 // Smooth Loading Screen
 import LightLoader from "./Design/Loader";
 import { AccessibilityButton } from "./Design/AccessibilityButton";
@@ -47,7 +48,7 @@ export default function App() {
         <Navbar />
         <Hero ready={ready} />
         <Services />
-        <AboutMe /> 
+        <AboutMe />
         {/* Dummy test scroll sections */}
         <section className="min-h-screen bg-red-500/10"></section>
         <section className="min-h-screen bg-green-500/10"></section>
@@ -61,9 +62,3 @@ export default function App() {
     </ReactLenis>
   );
 }
-
-
-
-
-
-

@@ -396,14 +396,17 @@ export default function ASCIIText({
   useEffect(() => {
     if (!containerRef.current) return;
 
-    const { width, height } = containerRef.current.getBoundingClientRect();
+    // ALways use IntersectionObserver for lazy loading
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          // If already initialized, do nothing
+          if (asciiRef.current) return;
 
-    if (width === 0 || height === 0) {
-      const observer = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting && entry.boundingClientRect.width > 0 && entry.boundingClientRect.height > 0) {
-            const { width: w, height: h } = entry.boundingClientRect;
+          const { width: w, height: h } = entry.boundingClientRect;
 
+          // Only init if we have valid dimensions
+          if (w > 0 && h > 0) {
             asciiRef.current = new CanvAscii(
               { text, asciiFontSize, textFontSize, textColor, planeBaseHeight, enableWaves },
               containerRef.current,
@@ -412,29 +415,16 @@ export default function ASCIIText({
             );
             asciiRef.current.load();
 
+            // Once initialized, we can stop observing for intersection if we want it to stay running
+            // Or keep observing to pause/resume. For now, simple lazy-load:
             observer.disconnect();
           }
-        },
-        { threshold: 0.1 }
-      );
-
-      observer.observe(containerRef.current);
-
-      return () => {
-        observer.disconnect();
-        if (asciiRef.current) {
-          asciiRef.current.dispose();
         }
-      };
-    }
-
-    asciiRef.current = new CanvAscii(
-      { text, asciiFontSize, textFontSize, textColor, planeBaseHeight, enableWaves },
-      containerRef.current,
-      width,
-      height
+      },
+      { threshold: 0.1 }
     );
-    asciiRef.current.load();
+
+    observer.observe(containerRef.current);
 
     const ro = new ResizeObserver(entries => {
       if (!entries[0] || !asciiRef.current) return;
@@ -446,9 +436,11 @@ export default function ASCIIText({
     ro.observe(containerRef.current);
 
     return () => {
+      observer.disconnect();
       ro.disconnect();
       if (asciiRef.current) {
         asciiRef.current.dispose();
+        asciiRef.current = null;
       }
     };
   }, [text, asciiFontSize, textFontSize, textColor, planeBaseHeight, enableWaves]);
