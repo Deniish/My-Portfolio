@@ -118,6 +118,7 @@ const ServiceSummary = () => {
         px-4 mt-10 overflow-hidden 
         font-light leading-snug text-center mb-42 
         contact-text-responsive
+        cursor-default
         -translate-y-10
         mobile-services-section
       "

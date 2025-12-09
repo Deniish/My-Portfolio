@@ -1,0 +1,83 @@
+/* Container behaves differently on desktop and mobile */
+.about-container {
+  height: 100vh;
+  display: flex;
+  overflow: hidden;
+  position: relative; /* Added for better pinning */
+}
+
+/* Each panel occupies full width and height */
+.about-panel {
+  min-width: 100vw;
+  width: 100vw; /* Added to ensure exact width */
+  height: 100vh;
+  padding: 0 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  will-change: transform;
+  flex-shrink: 0; /* Prevents panels from shrinking */
+}
+
+/* Typography */
+.title {
+  font-size: clamp(2rem, 5vw, 3.2rem); /* Responsive font size */
+  margin-bottom: 1rem;
+  letter-spacing: 2px;
+  font-weight: 300;
+}
+
+.desc {
+  max-width: 650px;
+  font-size: clamp(1.2rem, 2.5vw, 1.7rem); /* Responsive */
+  line-height: 1.6;
+  opacity: 0.8;
+  text-align: center;
+}
+
+.list {
+  font-size: clamp(1.2rem, 2.5vw, 1.7rem); /* Responsive */
+  line-height: 2;
+  opacity: 0.8;
+  list-style: none;
+  padding: 0;
+  text-align: left;
+}
+
+.list li {
+  margin-bottom: 0.8rem;
+  padding-left: 0.5rem;
+}
+
+/* MOBILE / TABLET VERSION (Vertical scroll) */
+@media (max-width: 900px) {
+  .about-container {
+    flex-direction: column;
+    height: auto;
+    overflow: visible;
+  }
+
+  .about-panel {
+    min-width: 100%;
+    width: 100%;
+    height: auto;
+    min-height: 80vh; /* Ensures each panel has good height */
+    padding: 4rem 1.5rem;
+  }
+
+  .title {
+    font-size: 2.5rem;
+    text-align: center;
+  }
+
+  .desc,
+  .list {
+    font-size: 1.4rem;
+    text-align: center;
+  }
+  
+  .list {
+    text-align: center;
+  }
+}
