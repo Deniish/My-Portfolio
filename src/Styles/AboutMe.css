@@ -1,15 +1,15 @@
-/* Container behaves differently on desktop and mobile */
 .about-container {
   height: 100vh;
   display: flex;
   overflow: hidden;
-  position: relative; /* Added for better pinning */
+  position: relative;
+  transition: background-color 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  background-color: #000;
 }
 
-/* Each panel occupies full width and height */
 .about-panel {
   min-width: 100vw;
-  width: 100vw; /* Added to ensure exact width */
+  width: 100vw;
   height: 100vh;
   padding: 0 2rem;
   display: flex;
@@ -17,12 +17,13 @@
   justify-content: center;
   align-items: center;
   will-change: transform;
-  flex-shrink: 0; /* Prevents panels from shrinking */
+  flex-shrink: 0;
+  background: transparent !important;
+  border: none !important;
 }
 
-/* Typography */
 .title {
-  font-size: clamp(2rem, 5vw, 3.2rem); /* Responsive font size */
+  font-size: clamp(2rem, 5vw, 3.2rem);
   margin-bottom: 1rem;
   letter-spacing: 2px;
   font-weight: 300;
@@ -30,14 +31,46 @@
 
 .desc {
   max-width: 650px;
-  font-size: clamp(1.2rem, 2.5vw, 1.7rem); /* Responsive */
+  font-size: clamp(1.2rem, 2.5vw, 1.7rem);
   line-height: 1.6;
   opacity: 0.8;
   text-align: center;
+  margin-bottom: 2rem;
 }
 
+/* -------------------------------
+   LINE STYLES
+-------------------------------- */
+.line {
+  width: 100%;
+  max-width: 650px;
+  height: 0.1px;
+
+  background-color: #d0d0d0;
+
+  transform: scaleX(0);
+  transform-origin: left center;
+
+  margin: 0 auto;
+}
+
+
+/* First line — closer to title */
+.line-title {
+  margin-top: -0.5rem;
+  margin-bottom: 2rem;
+}
+
+/* Second line — more breathing space */
+.line-text {
+  margin-top: 1rem;
+}
+
+/* -------------------------------
+   LIST STYLES
+-------------------------------- */
 .list {
-  font-size: clamp(1.2rem, 2.5vw, 1.7rem); /* Responsive */
+  font-size: clamp(1.2rem, 2.5vw, 1.7rem);
   line-height: 2;
   opacity: 0.8;
   list-style: none;
@@ -46,23 +79,33 @@
 }
 
 .list li {
-  margin-bottom: 0.8rem;
+  color: rgb(255, 255, 255);
+  margin-bottom: 0.1rem;
   padding-left: 0.5rem;
 }
 
-/* MOBILE / TABLET VERSION (Vertical scroll) */
+/* -------------------------------
+   MOBILE STYLES
+-------------------------------- */
 @media (max-width: 900px) {
   .about-container {
     flex-direction: column;
     height: auto;
     overflow: visible;
+    background: linear-gradient(
+      180deg,
+      #000 0%,
+      #1f2937 33%,
+      #0f0f0f 66%,
+      #111 100%
+    );
   }
 
   .about-panel {
     min-width: 100%;
     width: 100%;
     height: auto;
-    min-height: 80vh; /* Ensures each panel has good height */
+    min-height: 80vh;
     padding: 4rem 1.5rem;
   }
 
@@ -71,13 +114,149 @@
     text-align: center;
   }
 
-  .desc,
+  .desc {
+    font-size: 1.4rem;
+    text-align: center;
+  }
+
   .list {
     font-size: 1.4rem;
     text-align: center;
   }
-  
-  .list {
-    text-align: center;
+
+  .line {
+    transform: scaleX(1);
   }
+}
+
+/* -------------------------------
+   GRAIN OVERLAY
+-------------------------------- */
+.grain-overlay-2 {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 400vw;
+  height: 400vh;
+  background-image: url("../assets/backgrounds/noise.webp");
+  top: calc(50% - 400vh / 2);
+  left: calc(50% - 400vw / 2);
+  opacity: 0.2;
+  pointer-events: none;
+  animation: grain2 8s steps(10) infinite;
+  z-index: -1;
+}
+
+/* Grain Animation */
+@keyframes grain2 {
+  0%, 100% { transform: translate(0px, 0px); }
+  10% { transform: translate(-5%, -10%); }
+  20% { transform: translate(-15%, 5%); }
+  30% { transform: translate(7%, -25%); }
+  40% { transform: translate(-5%, 25%); }
+  50% { transform: translate(-15%, 10%); }
+  60% { transform: translate(15%, 0%); }
+  70% { transform: translate(0%, 15%); }
+  80% { transform: translate(-5%, -25%); }
+  90% { transform: translate(-10%, 10%); }
+}
+
+/* -------------------------------
+   PARAGRAPH-LIKE LIST
+-------------------------------- */
+.paragraph-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.paragraph-list li {
+  margin: 0;
+  padding: 0;
+  line-height: 1.5;
+}
+
+/* -------------------------------
+   TEXT HIGHLIGHT
+-------------------------------- */
+.highlight {
+  position: relative;
+  display: inline;
+  z-index: 1;
+  --stroke-scale: 0;
+  --stroke-color: transparent;
+}
+
+.highlight::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 75%;
+  transform: translateY(-50%) scaleX(var(--stroke-scale));
+  width: 97%;
+  height: 0.75em;
+  background: var(--stroke-color);
+  transform-origin: left center;
+  border-radius: 0.3em 0.15em 0.25em 0.2em;
+  z-index: -1;
+}
+
+/*----SVG HIGHLIGHT (BOX) ANIMATION----*/
+/*fd7024,fff0b3
+  2e2111, fff0b3
+*/
+
+.svg-highlight {
+  position: relative;
+  display: inline-block;
+  z-index: 1;
+
+  --stroke-scale: 0;
+  --stroke-color: transparent;
+}
+
+/* Background box behind SVG */
+.svg-highlight::before {
+  content: "";
+  position: absolute;
+
+  left: -0.45em;
+  right: -0.10em;
+
+  top: -0.32em;      /* slightly more up */
+  bottom: 0.15em;   /* 🔥 pushes box UP toward center */
+
+  transform: scaleX(var(--stroke-scale));
+  transform-origin: left center;
+
+  background: var(--stroke-color);
+  border-radius: 0.15em;
+  z-index: -1;
+
+  
+}
+
+
+/* Ultra-smooth GPU acceleration */
+.about-container,
+.about-panel,
+.svg-highlight,
+.line-title,
+.line-text,
+ul li {
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* Prevent layout shifts */
+.about-container {
+  transform-style: preserve-3d;
+}
+
+/* Smooth subpixel rendering */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
