@@ -29,21 +29,15 @@ export default function App() {
 });
 
 
-
-
   return (
-    // Keep your existing useLenis hooks, but update ReactLenis options:
     <ReactLenis
       root
       options={{
-        duration: 1.5,              // Slightly longer for smoother feel
-        lerp: 0.05,                 // Lower = smoother (0.05-0.08 is ideal)
+        duration: 1.1,
+        lerp: 0.15,
         smoothWheel: true,
         smoothTouch: false,
-        wheelMultiplier: 1.1,       // Slower scroll speed
-        touchMultiplier: 1.5,
-        infinite: false,
-        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Expo easing
+        easing: (t) => 1 - Math.pow(1 - t, 4),
       }}
       className="relative w-screen min-h-screen overflow-x-hidden"
     >
