@@ -4,6 +4,7 @@ import CardNav from "./CardNav";
 import "../Styles/Hero.css";
 import ServiceSummary from "../Design/ServiceSummary";
 import BackgroundLayer from "../Design/BackgroundLayer";
+import { socials } from "../constants/index";
 
 export default function Hero({ ready }) {
   const cardNavRef = useRef(null);
@@ -35,26 +36,7 @@ export default function Hero({ ready }) {
         <div className="w-full max-w-[90vw] sm:max-w-xl md:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto mb-6 sm:mb-8 md:mb-10">
           <CardNav
             ref={cardNavRef}
-            items={[
-              {
-                label: "LinkedIn",
-                url: "https://linkedin.com/in/denish-sharma",
-                icon: "/icons/linkedin-logo.svg",
-                fontFamily: '"Poppins", sans-serif',
-              },
-              {
-                label: "GitHub",
-                url: "https://github.com/Deniish",
-                icon: "/icons/github-logo.svg",
-                fontFamily: '"Monsa-Medium", sans-serif',
-              },
-              {
-                label: "Medium",
-                url: "https://medium.com/@denishsharma701",
-                icon: "/icons/medium-logo.svg",
-                fontFamily: '"Playfair Display", serif',
-              },
-            ]}
+            items={socials}
             menuColor="#000"
             ease="power3.out"
           />

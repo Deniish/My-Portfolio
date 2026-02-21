@@ -177,12 +177,12 @@ export const setupHorizontalScroll = (panels, containerRef) => {
     scrollTrigger: {
       trigger: containerRef.current,
       pin: true,
-      scrub: 3.1, // Ultra-slow scroll response (higher = slower, smoother)
+      scrub: 2.5, // Ultra-slow scroll response (higher = slower, smoother)
       end: () =>
         "+=" +
         containerRef.current.offsetWidth *
           panels.length *
-          3.1, // Makes horizontal section take MUCH more scroll distance
+          2.5, // Makes horizontal section take MUCH more scroll distance
       anticipatePin: 1,
       invalidateOnRefresh: true,
       id: "horizontal",

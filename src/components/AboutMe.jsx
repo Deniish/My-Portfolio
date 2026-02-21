@@ -21,6 +21,8 @@ import {
   configureScrollTrigger,
   cleanupAllAnimations,
 } from "../Animations/gsapAnimations";
+import Card5 from "../cards/Card5";
+import Card6 from "../cards/Card6";
 
 export default function AboutMe() {
   const containerRef = useRef(null);
@@ -179,7 +181,7 @@ export default function AboutMe() {
           ref={el => cardsRef.current[4] = el}
           className="absolute translate-x-2 pointer-events-none -bottom-10 -left-20"
         >
-          <Card />
+          <Card5 />
         </div>
 
         {/* Right card */}
@@ -187,7 +189,7 @@ export default function AboutMe() {
           ref={el => cardsRef.current[5] = el}
           className="absolute -translate-x-2 pointer-events-none -top-36 right-24"
         >
-          <Card2 />
+          <Card6 />
         </div>
 
         <div className="relative -translate-y-2 svg-highlight">
